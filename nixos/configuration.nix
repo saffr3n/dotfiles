@@ -31,6 +31,17 @@
 
   programs.firefox.enable = true;
 
+  services.keyd = {
+    enable = true;
+    keyboards.default = {
+      ids = [ "*" ];
+      settings.main = {
+        capslock = "overload(control, esc)";
+        esc = "capslock";
+      };
+    };
+  };
+
   environment.systemPackages = with pkgs; [
     neovim
     vim
