@@ -29,6 +29,12 @@
     extraGroups = [ "wheel" "networkmanager" ];
   };
 
+  programs.hyprland = {
+    enable = true;
+    xwayland.enable = true;
+    withUWSM = true;
+  };
+
   programs.firefox.enable = true;
 
   services.keyd = {
