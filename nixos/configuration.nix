@@ -52,6 +52,7 @@
     neovim
     vim
     git
+    kitty
   ];
 
   system.stateVersion = "25.11";
