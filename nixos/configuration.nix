@@ -35,8 +35,6 @@
     withUWSM = true;
   };
 
-  programs.firefox.enable = true;
-
   services.keyd = {
     enable = true;
     keyboards.default = {
@@ -49,10 +47,8 @@
   };
 
   environment.systemPackages = with pkgs; [
-    neovim
     vim
     git
-    kitty
   ];
 
   system.stateVersion = "25.11";
