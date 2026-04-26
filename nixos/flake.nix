@@ -7,9 +7,13 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    neovim-nightly-overlay = {
+      url = "github:nix-community/neovim-nightly-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, home-manager, ... }: {
+  outputs = { nixpkgs, home-manager, neovim-nightly-overlay, ... }: {
     nixosConfigurations.nixos-btw = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
@@ -17,7 +21,10 @@
         home-manager.nixosModules.home-manager
         {
           nix.settings.experimental-features = [ "nix-command" "flakes" ];
-          nixpkgs.config.allowUnfree = true;
+          nixpkgs = {
+            config.allowUnfree = true;
+            overlays = [ neovim-nightly-overlay.overlays.default ];
+          };
           home-manager = {
             backupFileExtension = "bak";
             useGlobalPkgs = true;
