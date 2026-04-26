@@ -1,9 +1,6 @@
-{ config, pkgs, ... }: let
-  username = "saff";
-in {
+{ config, pkgs, ... }: {
   home = {
-    inherit username;
-    homeDirectory = "/home/${username}";
+    homeDirectory = "/home/${config.home.username}";
 
     sessionVariables = {
       NIXOS_OZONE_WL = 1;

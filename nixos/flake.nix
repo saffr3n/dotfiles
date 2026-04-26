@@ -13,26 +13,57 @@
     };
   };
 
-  outputs = { nixpkgs, home-manager, neovim-nightly-overlay, ... }: {
-    nixosConfigurations.nixos-btw = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
+  outputs = { nixpkgs, home-manager, neovim-nightly-overlay, ... }: let
+    users = {
+      saff = {
+        extraGroups = [ "wheel" "networkmanager" ];
+      };
+    };
+
+    hosts = {
+      nixos-btw = {
+        system = "x86_64-linux";
+        users = [ "saff" ];
+      };
+    };
+  in {
+    nixosConfigurations = builtins.mapAttrs (hostname: host: nixpkgs.lib.nixosSystem {
+      system = host.system;
       modules = [
-        ./configuration.nix
+        ./hosts/${hostname}
         home-manager.nixosModules.home-manager
         {
+          networking.hostName = hostname;
           nix.settings.experimental-features = [ "nix-command" "flakes" ];
           nixpkgs = {
             config.allowUnfree = true;
             overlays = [ neovim-nightly-overlay.overlays.default ];
           };
+
           home-manager = {
             backupFileExtension = "bak";
             useGlobalPkgs = true;
             useUserPackages = true;
-            users.saff.imports = [ ./home.nix ];
+            users = builtins.listToAttrs (map (username: {
+              name = username;
+              value = {
+                imports = [
+                  { home.username = username; }
+                  ./users/${username}
+                ];
+              };
+            }) host.users);
           };
+
+          users.users = builtins.listToAttrs (map (username: {
+            name = username;
+            value = {
+              isNormalUser = true;
+              extraGroups = users.${username}.extraGroups or [];
+            };
+          }) host.users);
         }
       ];
-    };
+    }) hosts;
   };
 }
