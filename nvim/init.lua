@@ -1,0 +1,23 @@
+vim.g.mapleader = ' '
+vim.g.maplocalleader = ' '
+
+vim.o.number = true
+vim.o.relativenumber = true
+vim.o.signcolumn = 'yes'
+vim.o.laststatus = 3
+vim.o.scrolloff = 8
+vim.o.cursorline = true
+vim.o.breakindent = true
+vim.o.linebreak = true
+vim.o.splitright = true
+vim.o.splitbelow = true
+vim.o.shiftwidth = 2
+vim.o.softtabstop = -1
+vim.o.expandtab = true
+vim.o.confirm = true
+vim.o.undofile = true
+vim.o.backupcopy = 'yes'
+vim.o.clipboard = 'unnamedplus'
+vim.o.ignorecase = true
+vim.o.smartcase = true
+vim.o.inccommand = 'split'
