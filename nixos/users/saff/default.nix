@@ -1,6 +1,7 @@
 { config, pkgs, ... }: {
   imports = [
     ./hyprland.nix
+    ./kitty.nix
     ./neovim.nix
   ];
 
@@ -8,7 +9,6 @@
     homeDirectory = "/home/${config.home.username}";
 
     packages = with pkgs; [
-      kitty
       firefox
     ];
 
