@@ -11,9 +11,13 @@
       url = "github:nix-community/neovim-nightly-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    zen-browser = {
+      url = "github:youwen5/zen-browser-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { nixpkgs, home-manager, neovim-nightly-overlay, ... }: let
+  outputs = { nixpkgs, home-manager, neovim-nightly-overlay, zen-browser, ... }: let
     users = {
       saff = {
         extraGroups = [ "wheel" "networkmanager" ];
@@ -26,6 +30,13 @@
         users = [ "saff" ];
       };
     };
+
+    overlaysFor = system: [
+      neovim-nightly-overlay.overlays.default
+      (final: prev: {
+        zen-browser = zen-browser.packages.${system}.default;
+      })
+    ];
   in {
     nixosConfigurations = builtins.mapAttrs (hostname: host: nixpkgs.lib.nixosSystem {
       system = host.system;
@@ -37,7 +48,7 @@
           nix.settings.experimental-features = [ "nix-command" "flakes" ];
           nixpkgs = {
             config.allowUnfree = true;
-            overlays = [ neovim-nightly-overlay.overlays.default ];
+            overlays = overlaysFor host.system;
           };
 
           home-manager = {

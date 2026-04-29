@@ -9,7 +9,7 @@
     homeDirectory = "/home/${config.home.username}";
 
     packages = with pkgs; [
-      firefox
+      zen-browser
     ];
 
     stateVersion = "25.11";
