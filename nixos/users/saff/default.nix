@@ -9,6 +9,8 @@
     homeDirectory = "/home/${config.home.username}";
 
     packages = with pkgs; [
+      imv
+      mpv
       zen-browser
     ];
 
