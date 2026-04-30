@@ -1,5 +1,8 @@
 { pkgs, ... }: {
-  imports = [ ./hardware.nix ];
+  imports = [
+    ./hardware.nix
+    ./nvidia.nix
+  ];
 
   boot.loader = {
     systemd-boot.enable = true;
