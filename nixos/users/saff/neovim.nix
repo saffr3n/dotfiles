@@ -3,6 +3,9 @@
 
   home.packages = with pkgs; [
     neovim
+    tree-sitter
+    nixd
+    emmylua-ls
   ];
 
   xdg.configFile.nvim = {
