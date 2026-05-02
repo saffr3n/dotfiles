@@ -10,6 +10,14 @@
     homeDirectory = "/home/${config.home.username}";
 
     packages = with pkgs; [
+      bat
+      btop
+      fastfetch
+      fd
+      fzf
+      lazygit
+      ripgrep
+
       imv
       mpv
       zen-browser
