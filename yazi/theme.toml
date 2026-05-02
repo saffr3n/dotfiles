@@ -1,0 +1,13 @@
+[mgr]
+cwd = { fg = 'white' }
+border_style = { fg = 'blue' }
+
+[tabs]
+active = { bg = 'blue', fg = 'black', bold = true }
+inactive = { bg = '#1a1b26', fg = 'blue' }
+
+[mode]
+normal_main = { bg = 'blue', fg = 'black', bold = true }
+normal_alt = { bg = 'lightgray', fg = 'black', bold = true }
+select_main = { bg = 'red', fg = 'black', bold = true }
+select_alt = { bg = 'lightgray', fg = 'black', bold = true }

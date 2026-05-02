@@ -3,6 +3,7 @@
     ./hyprland.nix
     ./kitty.nix
     ./neovim.nix
+    ./yazi.nix
   ];
 
   home = {
