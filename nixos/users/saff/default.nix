@@ -2,6 +2,7 @@
   imports = [
     ./hyprland.nix
     ./kitty.nix
+    ./lazygit.nix
     ./neovim.nix
     ./yazi.nix
   ];
@@ -15,7 +16,6 @@
       fastfetch
       fd
       fzf
-      lazygit
       ripgrep
 
       imv
