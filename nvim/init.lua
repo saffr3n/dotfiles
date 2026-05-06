@@ -23,3 +23,8 @@ vim.o.clipboard = 'unnamedplus'
 vim.o.ignorecase = true
 vim.o.smartcase = true
 vim.o.inccommand = 'split'
+
+vim.api.nvim_create_autocmd('TextYankPost', {
+  group = vim.api.nvim_create_augroup('yank-hl', { clear = true }),
+  callback = function() vim.hl.on_yank() end,
+})
