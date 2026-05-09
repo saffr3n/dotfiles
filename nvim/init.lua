@@ -25,6 +25,14 @@ vim.o.ignorecase = true
 vim.o.smartcase = true
 vim.o.inccommand = 'split'
 
+vim.api.nvim_create_autocmd('VimEnter', {
+  once = true,
+  callback = function()
+    vim.cmd.packadd('nvim.undotree')
+    vim.keymap.set('n', '<Leader>u', vim.cmd.Undotree)
+  end,
+})
+
 vim.api.nvim_create_autocmd('TextYankPost', {
   group = vim.api.nvim_create_augroup('yank-hl', { clear = true }),
   callback = function() vim.hl.on_yank() end,
