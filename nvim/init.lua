@@ -47,3 +47,8 @@ vim.api.nvim_create_autocmd('FileType', {
     vim.treesitter.start(event.buf, lang)
   end,
 })
+
+for _, file in ipairs(vim.api.nvim_get_runtime_file('lsp/*.lua', true)) do
+  local name = vim.fn.fnamemodify(file, ':t:r')
+  vim.lsp.enable(name)
+end
