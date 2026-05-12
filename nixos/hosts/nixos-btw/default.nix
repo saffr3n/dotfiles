@@ -9,6 +9,8 @@
     efi.canTouchEfiVariables = true;
   };
 
+  services.udisks2.enable = true;
+
   networking.networkmanager.enable = true;
 
   time.timeZone = "Europe/Istanbul";
