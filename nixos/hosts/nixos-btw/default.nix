@@ -11,6 +11,7 @@
 
   services.udisks2.enable = true;
 
+  systemd.network.wait-online.enable = false;
   networking.networkmanager.enable = true;
 
   time.timeZone = "Europe/Istanbul";
