@@ -9,6 +9,15 @@
     efi.canTouchEfiVariables = true;
   };
 
+  powerManagement.cpuFreqGovernor = "performance";
+  services.udev.extraRules = ''
+    ACTION=="add|change",        \
+    SUBSYSTEM=="block",          \
+    KERNEL=="sd[a-z]",           \
+    ATTR{queue/rotational}=="1", \
+    RUN+="${pkgs.hdparm}/bin/hdparm -B 255 -S 0 /dev/%k"
+  '';
+
   services.udisks2.enable = true;
 
   systemd.network.wait-online.enable = false;
