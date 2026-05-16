@@ -6,6 +6,8 @@ vim.keymap.set('x', '<M-j>', ":move '>+1<CR>gv")
 vim.keymap.set('x', '<M-k>', ":move '<-2<CR>gv")
 vim.keymap.set('x', '>', '>gv')
 vim.keymap.set('x', '<', '<gv')
+vim.keymap.set('n', '[t', vim.cmd.tabprevious)
+vim.keymap.set('n', ']t', vim.cmd.tabnext)
 vim.keymap.set('n', '<Esc>', vim.cmd.nohlsearch)
 
 vim.o.number = true
