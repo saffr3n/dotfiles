@@ -1,9 +1,9 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
-vim.keymap.set('n', '<M-j>', ':move +1<CR>')
-vim.keymap.set('n', '<M-k>', ':move -2<CR>')
-vim.keymap.set('x', '<M-j>', ":move '>+1<CR>gv")
-vim.keymap.set('x', '<M-k>', ":move '<-2<CR>gv")
+vim.keymap.set('n', '<M-j>', ':move +1<CR>==')
+vim.keymap.set('n', '<M-k>', ':move -2<CR>==')
+vim.keymap.set('x', '<M-j>', ":move '>+1<CR>gv=gv")
+vim.keymap.set('x', '<M-k>', ":move '<-2<CR>gv=gv")
 vim.keymap.set('x', '>', '>gv')
 vim.keymap.set('x', '<', '<gv')
 vim.keymap.set('n', '[t', vim.cmd.tabprevious)
