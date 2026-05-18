@@ -21,6 +21,11 @@
       imv
       mpv
       zen-browser
+
+      nerd-fonts.jetbrains-mono
+      noto-fonts
+      noto-fonts-cjk-sans
+      noto-fonts-color-emoji
     ];
 
     stateVersion = "25.11";
@@ -42,6 +47,16 @@
     udiskie = {
       enable = true;
       settings.program_options.file_manager = "kitty -e yazi";
+    };
+  };
+
+  fonts.fontconfig = {
+    enable = true;
+    defaultFonts = {
+      serif = [ "Noto Serif" ];
+      sansSerif = [ "Noto Sans" ];
+      monospace = [ "JetBrainsMono Nerd Font Mono" ];
+      emoji = [ "Noto Color Emoji" ];
     };
   };
 }
