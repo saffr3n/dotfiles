@@ -1,10 +1,14 @@
 { config, pkgs, ... }: {
-  home.sessionVariables.NIXOS_OZONE_WL = 1;
+  home = {
+    packages = with pkgs; [
+      grimblast
+      wl-clipboard
+    ];
 
-  home.packages = with pkgs; [
-    grimblast
-    wl-clipboard
-  ];
+    sessionVariables = {
+      NIXOS_OZONE_WL = 1;
+    };
+  };
 
   wayland.windowManager.hyprland.systemd.enable = false;
 

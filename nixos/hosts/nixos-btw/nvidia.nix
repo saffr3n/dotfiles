@@ -1,6 +1,10 @@
 { config, ... }: {
+  environment.sessionVariables = {
+    LIBVA_DRIVER_NAME = "nvidia";
+  };
+
   services.xserver.videoDrivers = [ "modesetting" "nvidia" ];
-  environment.sessionVariables.LIBVA_DRIVER_NAME = "nvidia";
+
   hardware = {
     graphics.enable = true;
     nvidia = {
