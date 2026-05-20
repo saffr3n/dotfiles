@@ -1,5 +1,6 @@
 { config, pkgs, ... }: {
   imports = [
+    ./btop.nix
     ./hyprland.nix
     ./kitty.nix
     ./lazygit.nix
@@ -12,7 +13,6 @@
 
     packages = with pkgs; [
       bat
-      btop
       fastfetch
       fd
       fzf
