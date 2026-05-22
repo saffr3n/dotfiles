@@ -1,6 +1,7 @@
 { config, pkgs, ... }: {
   imports = [
     ./btop.nix
+    ./git.nix
     ./hyprland.nix
     ./kitty.nix
     ./lazygit.nix
