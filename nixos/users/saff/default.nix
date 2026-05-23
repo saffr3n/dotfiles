@@ -51,7 +51,12 @@
     };
   };
 
-  programs.bash.enable = true;
+  programs.bash = {
+    enable = true;
+    shellAliases = {
+      l = "ls -aFhl";
+    };
+  };
 
   home.pointerCursor = {
     package = pkgs.bibata-cursors;
