@@ -1,3 +1,6 @@
+vim.loader.enable()
+require('vim._core.ui2').enable()
+
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 vim.keymap.set('n', '<M-j>', ':move +1<CR>==')
