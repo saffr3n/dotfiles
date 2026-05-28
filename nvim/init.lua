@@ -1,6 +1,8 @@
 vim.loader.enable()
 require('vim._core.ui2').enable()
 
+vim.diagnostic.config({ severity_sort = true, virtual_text = true })
+
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 vim.keymap.set('n', '<M-j>', ':move +1<CR>==')
