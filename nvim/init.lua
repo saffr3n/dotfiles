@@ -14,6 +14,8 @@ vim.keymap.set('x', '<', '<gv')
 vim.keymap.set('n', '[t', vim.cmd.tabprevious)
 vim.keymap.set('n', ']t', vim.cmd.tabnext)
 vim.keymap.set('n', '<Esc>', vim.cmd.nohlsearch)
+vim.keymap.set('n', '<Leader>q', vim.diagnostic.setqflist)
+vim.keymap.set('n', '<Leader>l', vim.diagnostic.setloclist)
 
 vim.o.number = true
 vim.o.relativenumber = true
