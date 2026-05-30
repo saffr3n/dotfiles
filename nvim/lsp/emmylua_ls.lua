@@ -1,6 +1,6 @@
 return {
   cmd = { 'emmylua_ls' },
   filetypes = { 'lua' },
-  root_markers = { '.git', '.stylua.toml' },
+  root_markers = { '.emmyrc.json', '.git' },
   workspace_required = false,
 }
