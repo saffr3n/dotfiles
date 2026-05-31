@@ -6,6 +6,7 @@
     ./kitty.nix
     ./lazygit.nix
     ./neovim.nix
+    ./noctalia.nix
     ./yazi.nix
   ];
 
