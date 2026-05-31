@@ -9,6 +9,7 @@
     efi.canTouchEfiVariables = true;
   };
 
+  services.upower.enable = true;
   powerManagement.cpuFreqGovernor = "performance";
   services.udev.extraRules = ''
     ACTION=="add|change",        \
