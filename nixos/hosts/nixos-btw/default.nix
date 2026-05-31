@@ -21,6 +21,8 @@
 
   services.udisks2.enable = true;
 
+  hardware.bluetooth.enable = true;
+
   systemd.network.wait-online.enable = false;
   networking.networkmanager.enable = true;
 
