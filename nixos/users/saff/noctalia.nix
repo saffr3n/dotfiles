@@ -1,3 +1,6 @@
 { config, pkgs, ... }: {
-  home.packages = [ pkgs.noctalia-shell ];
+  home.packages = with pkgs; [
+    noctalia-shell
+    papirus-icon-theme
+  ];
 }
