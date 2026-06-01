@@ -1,6 +1,7 @@
 { config, pkgs, ... }: {
   home.packages = with pkgs; [
     noctalia-shell
+    qt6Packages.qt6ct
     papirus-icon-theme
   ];
 
