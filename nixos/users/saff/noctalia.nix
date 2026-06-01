@@ -5,6 +5,8 @@ in {
     packages = with pkgs; [
       noctalia-shell
       qt6Packages.qt6ct
+      nwg-look
+      adw-gtk3
       papirus-icon-theme
     ];
 
