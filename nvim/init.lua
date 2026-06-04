@@ -16,6 +16,10 @@ vim.keymap.set('n', ']t', vim.cmd.tabnext)
 vim.keymap.set('n', '<Esc>', vim.cmd.nohlsearch)
 vim.keymap.set('n', '<Leader>q', vim.diagnostic.setqflist)
 vim.keymap.set('n', '<Leader>l', vim.diagnostic.setloclist)
+vim.keymap.set('n', '<C-h>', ':vertical resize -1<CR>')
+vim.keymap.set('n', '<C-j>', ':horizontal resize -1<CR>')
+vim.keymap.set('n', '<C-k>', ':horizontal resize +1<CR>')
+vim.keymap.set('n', '<C-l>', ':vertical resize +1<CR>')
 vim.keymap.set('n', '<Leader>e', ':20Lex<CR>')
 
 vim.g.netrw_banner = 0
