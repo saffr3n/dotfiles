@@ -42,6 +42,7 @@ vim.o.winborder = 'rounded'
 vim.o.pumborder = 'rounded'
 vim.o.list = true
 vim.o.listchars = 'trail:·,nbsp:·'
+vim.o.fillchars = 'eob: '
 vim.o.shiftwidth = 2
 vim.o.softtabstop = -1
 vim.o.expandtab = true
