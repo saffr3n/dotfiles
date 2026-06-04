@@ -54,6 +54,7 @@ vim.o.ignorecase = true
 vim.o.smartcase = true
 vim.o.inccommand = 'split'
 vim.o.completeopt = 'menuone,noselect,fuzzy,popup'
+vim.o.cmdheight = 0
 
 vim.api.nvim_create_autocmd('VimEnter', {
   once = true,
