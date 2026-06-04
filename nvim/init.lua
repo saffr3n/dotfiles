@@ -27,6 +27,7 @@ vim.g.netrw_liststyle = 3
 vim.g.netrw_sizestyle = 'H'
 vim.g.netrw_altfile = 1
 vim.g.netrw_browse_split = 4
+vim.o.title = true
 vim.o.number = true
 vim.o.relativenumber = true
 vim.o.signcolumn = 'yes'
