@@ -92,3 +92,15 @@ for _, file in ipairs(vim.api.nvim_get_runtime_file('lsp/*.lua', true)) do
   local name = vim.fn.fnamemodify(file, ':t:r')
   vim.lsp.enable(name)
 end
+
+vim.api.nvim_create_autocmd('LspAttach', {
+  group = vim.api.nvim_create_augroup('lsp-attach', { clear = true }),
+  callback = function(event)
+    ---@param mode string | string[]
+    ---@param lhs string
+    ---@param rhs string | function
+    local function map(mode, lhs, rhs) vim.keymap.set(mode, lhs, rhs, { buffer = event.buf }) end
+    map('i', '<C-Space>', vim.lsp.completion.get)
+    vim.lsp.completion.enable(true, event.data.client_id, event.buf)
+  end,
+})
