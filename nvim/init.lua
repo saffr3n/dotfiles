@@ -73,7 +73,7 @@ end, { expr = true })
 vim.api.nvim_create_autocmd('TextYankPost', {
   group = vim.api.nvim_create_augroup('yank', { clear = true }),
   callback = function()
-    vim.hl.on_yank()
+    vim.hl.hl_op()
     if not cur_pre_yank then return end
     vim.api.nvim_win_set_cursor(0, cur_pre_yank)
     cur_pre_yank = nil
