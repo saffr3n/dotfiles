@@ -103,6 +103,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
     ---@param rhs string | function
     local function map(mode, lhs, rhs) vim.keymap.set(mode, lhs, rhs, { buffer = event.buf }) end
     map('i', '<C-Space>', vim.lsp.completion.get)
+    map('n', '<Leader>th', function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) end)
     vim.lsp.completion.enable(true, event.data.client_id, event.buf)
   end,
 })
