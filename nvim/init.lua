@@ -1,5 +1,6 @@
 vim.loader.enable()
 require('vim._core.ui2').enable()
+vim.cmd.packadd('nvim.undotree')
 
 vim.diagnostic.config({ severity_sort = true, virtual_text = true })
 
@@ -39,6 +40,7 @@ vim.keymap.set('x', '<', '<gv')
 vim.keymap.set('n', '[t', vim.cmd.tabprevious)
 vim.keymap.set('n', ']t', vim.cmd.tabnext)
 vim.keymap.set('n', '<Esc>', vim.cmd.nohlsearch)
+vim.keymap.set('n', '<Leader>u', vim.cmd.Undotree)
 vim.keymap.set('n', '<Leader>q', vim.diagnostic.setqflist)
 vim.keymap.set('n', '<Leader>l', vim.diagnostic.setloclist)
 vim.keymap.set('n', '<C-h>', ':vertical resize -1<CR>')
@@ -80,14 +82,6 @@ vim.o.smartcase = true
 vim.o.inccommand = 'split'
 vim.o.completeopt = 'menuone,noselect,fuzzy,popup'
 vim.o.cmdheight = 0
-
-vim.api.nvim_create_autocmd('VimEnter', {
-  once = true,
-  callback = function()
-    vim.cmd.packadd('nvim.undotree')
-    vim.keymap.set('n', '<Leader>u', vim.cmd.Undotree)
-  end,
-})
 
 ---@type [integer, integer]?
 local cur_pre_yank
