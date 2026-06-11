@@ -81,7 +81,10 @@ vim.o.ignorecase = true
 vim.o.smartcase = true
 vim.o.inccommand = 'split'
 vim.o.completeopt = 'menuone,noselect,fuzzy,popup'
+vim.o.wildmode = 'noselect:lastused,full'
+vim.o.wildoptions = 'pum,tagfile,fuzzy'
 vim.o.cmdheight = 0
+vim.opt.path:append("**")
 
 ---@type [integer, integer]?
 local cur_pre_yank
