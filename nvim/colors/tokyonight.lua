@@ -46,6 +46,12 @@ local hl = {
   PmenuThumb = { bg = theme.blue },
   PmenuSel = { link = 'CursorLine' },
   PmenuMatch = { fg = theme.blue, bold = true },
+
+  SignColumn = { link = 'NonText' },
+  CursorLineSign = { fg = theme.orange, bold = true },
+  LineNr = { link = 'SignColumn' },
+  CursorLineNr = { link = 'CursorLineSign' },
+  CursorLineFold = { link = 'CursorLineSign' },
 }
 
 for name, config in pairs(hl) do
