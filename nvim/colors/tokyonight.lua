@@ -40,6 +40,12 @@ local hl = {
   NormalFloat = { bg = theme.bg.alt, fg = theme.fg.main },
   FloatBorder = { link = 'WinSeparator' },
   FloatTitle = { link = 'FloatBorder' },
+
+  Pmenu = { link = 'NormalFloat' },
+  PmenuBorder = { link = 'FloatBorder' },
+  PmenuThumb = { bg = theme.blue },
+  PmenuSel = { link = 'CursorLine' },
+  PmenuMatch = { fg = theme.blue, bold = true },
 }
 
 for name, config in pairs(hl) do
