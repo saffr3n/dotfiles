@@ -4,6 +4,14 @@ local palette = {
 
   blue6 = '#565f89',
 
+  cyan1 = '#0db9d7',
+
+  green2 = '#1abc9c',
+
+  yellow = '#e0af68',
+
+  red3 = '#db4b4b',
+
   white1 = '#a9b1d6',
   white2 = '#c0caf5',
 }
@@ -28,6 +36,13 @@ local theme = {
 
   blue = '#7aa2f7',
   orange = '#ff9e64',
+
+  diag = {
+    error = palette.red3,
+    warn = palette.yellow,
+    info = palette.cyan1,
+    hint = palette.green2,
+  },
 }
 
 local hl = {
@@ -61,6 +76,15 @@ local hl = {
   StatusLineNC = { bg = theme.bg.alt, fg = theme.fg.dim },
 
   TabLineSel = { bg = theme.blue, fg = theme.fg.inverse, bold = true },
+
+  DiagnosticError = { fg = theme.diag.error },
+  DiagnosticWarn = { fg = theme.diag.warn },
+  DiagnosticInfo = { fg = theme.diag.info },
+  DiagnosticHint = { fg = theme.diag.hint },
+  DiagnosticUnderlineError = { sp = theme.diag.error, underline = true },
+  DiagnosticUnderlineWarn = { sp = theme.diag.warn, underline = true },
+  DiagnosticUnderlineInfo = { sp = theme.diag.info, underline = true },
+  DiagnosticUnderlineHint = { sp = theme.diag.hint, underline = true },
 }
 
 for name, config in pairs(hl) do
