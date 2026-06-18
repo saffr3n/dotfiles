@@ -85,6 +85,9 @@ local hl = {
   DiagnosticUnderlineWarn = { sp = theme.diag.warn, underline = true },
   DiagnosticUnderlineInfo = { sp = theme.diag.info, underline = true },
   DiagnosticUnderlineHint = { sp = theme.diag.hint, underline = true },
+
+  QuickFixLine = { bg = theme.over2, bold = true },
+  Error = { link = 'DiagnosticError' },
 }
 
 for name, config in pairs(hl) do
