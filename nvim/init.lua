@@ -1,5 +1,6 @@
 vim.loader.enable()
 require('vim._core.ui2').enable()
+vim.cmd.colorscheme('tokyonight')
 vim.cmd.packadd('nvim.undotree')
 
 vim.diagnostic.config({ severity_sort = true, virtual_text = true })
