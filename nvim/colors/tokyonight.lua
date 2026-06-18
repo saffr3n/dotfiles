@@ -8,6 +8,7 @@ local palette = {
 local theme = {
   bg = {
     main = palette.black2,
+    alt = palette.black1,
   },
 
   fg = {
@@ -35,6 +36,10 @@ local hl = {
   WinSeparator = { fg = theme.blue },
   MatchParen = { fg = theme.orange, bold = true },
   NonText = { fg = theme.fg.dim },
+
+  NormalFloat = { bg = theme.bg.alt, fg = theme.fg.main },
+  FloatBorder = { link = 'WinSeparator' },
+  FloatTitle = { link = 'FloatBorder' },
 }
 
 for name, config in pairs(hl) do
