@@ -1,7 +1,10 @@
 local palette = {
   black1 = '#16161e',
   black2 = '#1a1b26',
+
   blue6 = '#565f89',
+
+  white1 = '#a9b1d6',
   white2 = '#c0caf5',
 }
 
@@ -13,6 +16,7 @@ local theme = {
 
   fg = {
     main = palette.white2,
+    alt = palette.white1,
     dim = palette.blue6 ,
     inverse = palette.black1,
   },
@@ -52,6 +56,11 @@ local hl = {
   LineNr = { link = 'SignColumn' },
   CursorLineNr = { link = 'CursorLineSign' },
   CursorLineFold = { link = 'CursorLineSign' },
+
+  StatusLine = { bg = theme.bg.alt, fg = theme.fg.alt },
+  StatusLineNC = { bg = theme.bg.alt, fg = theme.fg.dim },
+
+  TabLineSel = { bg = theme.blue, fg = theme.fg.inverse, bold = true },
 }
 
 for name, config in pairs(hl) do
