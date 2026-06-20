@@ -88,6 +88,15 @@ local hl = {
 
   QuickFixLine = { bg = theme.over2, bold = true },
   Error = { link = 'DiagnosticError' },
+
+  MsgArea = { fg = theme.fg.alt },
+  ModeMsg = { fg = theme.fg.alt, bold = true },
+  ErrorMsg = { link = 'DiagnosticError' },
+  WarningMsg = { link = 'DiagnosticWarn' },
+  OkMsg = { link = 'DiagnosticHint' },
+  MoreMsg = { fg = theme.blue },
+  Title = { fg = theme.blue, bold = true },
+  Question = { link = 'MoreMsg' },
 }
 
 for name, config in pairs(hl) do
