@@ -1,12 +1,16 @@
 local palette = {
   black1 = '#16161e',
   black2 = '#1a1b26',
+  black3 = '#1f2231',
 
+  blue4 = '#394b70',
   blue6 = '#565f89',
 
   cyan1 = '#0db9d7',
 
   green2 = '#1abc9c',
+  green3 = '#449dab',
+  green4 = '#243e4a',
 
   yellow = '#e0af68',
 
@@ -42,6 +46,16 @@ local theme = {
     warn = palette.yellow,
     info = palette.cyan1,
     hint = palette.green2,
+  },
+
+  diff = {
+    add_bg = palette.green4,
+    add_fg = palette.green3,
+    change_bg = palette.black3,
+    text_bg = palette.blue4,
+    change_fg = '#6183bb',
+    delete_bg = '#4a272f',
+    delete_fg = '#914c54',
   },
 }
 
@@ -97,6 +111,14 @@ local hl = {
   MoreMsg = { fg = theme.blue },
   Title = { fg = theme.blue, bold = true },
   Question = { link = 'MoreMsg' },
+
+  DiffAdd = { bg = theme.diff.add_bg },
+  DiffChange = { bg = theme.diff.change_bg },
+  DiffDelete = { bg = theme.diff.delete_bg },
+  DiffText = { bg = theme.diff.text_bg },
+  Added = { fg = theme.diff.add_fg },
+  Changed = { fg = theme.diff.change_fg },
+  Removed = { fg = theme.diff.delete_fg },
 }
 
 for name, config in pairs(hl) do
