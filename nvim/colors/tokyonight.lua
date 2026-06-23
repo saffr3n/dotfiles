@@ -39,7 +39,11 @@ local theme = {
   over4 = '#3d59a1', -- Search
 
   blue = '#7aa2f7',
+  cyan = '#2ac3de',
+  green = '#9ece6a',
   orange = '#ff9e64',
+  sky = '#89ddff',
+  violet = '#bb9af7',
 
   diag = {
     error = palette.red3,
@@ -119,6 +123,20 @@ local hl = {
   Added = { fg = theme.diff.add_fg },
   Changed = { fg = theme.diff.change_fg },
   Removed = { fg = theme.diff.delete_fg },
+
+  Comment = { link = 'NonText' },
+  Constant = { fg = theme.orange },
+  Delimiter = { fg = theme.fg.alt },
+  Directory = { fg = theme.blue },
+  Function = { fg = theme.blue },
+  Identifier = { fg = theme.fg.main },
+  Operator = { fg = theme.sky },
+  Special = { fg = theme.cyan },
+  Statement = { fg = theme.violet },
+  String = { fg = theme.green },
+  Type = { fg = theme.cyan },
+  ['@constructor'] = { link = 'Delimiter' },
+  ['@variable'] = { link = 'Identifier' },
 }
 
 for name, config in pairs(hl) do
