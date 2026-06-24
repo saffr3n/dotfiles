@@ -137,6 +137,8 @@ local hl = {
   Type = { fg = theme.cyan },
   ['@constructor'] = { link = 'Delimiter' },
   ['@variable'] = { link = 'Identifier' },
+
+  netrwTreeBar = { link = 'NonText' },
 }
 
 for name, config in pairs(hl) do
