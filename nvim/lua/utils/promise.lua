@@ -27,6 +27,36 @@ function H.settle(promise, status, value)
   if promise.status ~= 'pending' then return end
   promise.status = status
   promise.value = value
+  H.dispatch(promise)
+end
+
+function H.dispatch(promise)
+  for _, reaction in ipairs(promise.reactions) do
+    H.handle(promise, reaction)
+  end
+  promise.reactions = {}
+end
+
+function H.handle(promise, reaction)
+  vim.schedule(function()
+    local cb = promise.status == 'resolved' and reaction.on_resolved or nil
+
+    if cb then
+      local ok, res = H.try(cb, promise.value)
+      if ok then
+        H.resolve(reaction.next, res)
+      else
+        H.reject(reaction.next, res)
+      end
+      return
+    end
+
+    if promise.status == 'resolved' then
+      H.resolve(reaction.next, promise.value)
+    else
+      H.reject(reaction.next, promise.value)
+    end
+  end)
 end
 
 function H.try(fn, ...)
@@ -36,7 +66,11 @@ end
 function Proto:wait(on_resolved)
   local next = M.new()
   local reaction = { on_resolved = on_resolved, next = next }
-  table.insert(self.reactions, reaction)
+  if self.status == 'pending' then
+    table.insert(self.reactions, reaction)
+  else
+    H.handle(promise, reaction)
+  end
   return next
 end
 
