@@ -39,7 +39,12 @@ end
 
 function H.handle(promise, reaction)
   vim.schedule(function()
-    local cb = promise.status == 'resolved' and reaction.on_resolved or nil
+    local cb
+    if promise.status == 'resolved' then
+      cb = reaction.on_resolved
+    elseif promise.status == 'rejected' then
+      cb = reaction.on_rejected
+    end
 
     if cb then
       local ok, res = H.try(cb, promise.value)
@@ -63,9 +68,12 @@ function H.try(fn, ...)
   return xpcall(fn, function(err) return debug.traceback(err, 2) end, ...)
 end
 
-function Proto:wait(on_resolved)
+function Proto:wait(on_resolved) return H.new_link(self, { on_resolved = on_resolved }) end
+function Proto:catch(on_rejected) return H.new_link(self, { on_rejected = on_rejected }) end
+
+function H.new_link(promise, handler)
   local next = M.new()
-  local reaction = { on_resolved = on_resolved, next = next }
+  local reaction = vim.tbl_extend('force', handler, { next = next })
   if self.status == 'pending' then
     table.insert(self.reactions, reaction)
   else
