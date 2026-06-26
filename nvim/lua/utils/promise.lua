@@ -1,11 +1,14 @@
 local M = {}
 local H = {}
 
+local Proto = {}
+
 function M.new(executor)
-  local self = {
+  local self = setmetatable({
     status = 'pending',
     value = nil,
-  }
+    reactions = {},
+  }, Proto)
 
   if executor then
     local resolve = function(value) H.resolve(self, value) end
@@ -28,6 +31,13 @@ end
 
 function H.try(fn, ...)
   return xpcall(fn, function(err) return debug.traceback(err, 2) end, ...)
+end
+
+function Proto:wait(on_resolved)
+  local next = M.new()
+  local reaction = { on_resolved = on_resolved, next = next }
+  table.insert(self.reactions, reaction)
+  return next
 end
 
 return M
