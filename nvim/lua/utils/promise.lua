@@ -64,6 +64,12 @@ function H.handle(promise, reaction)
       return
     end
 
+    cb = reaction.on_settled
+    if cb then
+      local ok, err = H.try(cb)
+      if not ok then return H.reject(reaction.next, err) end
+    end
+
     if state.status == 'resolved' then
       H.resolve(reaction.next, state.value)
     else
@@ -78,6 +84,7 @@ end
 
 function Proto:wait(on_resolved) return H.new_link(self, { on_resolved = on_resolved }) end
 function Proto:catch(on_rejected) return H.new_link(self, { on_rejected = on_rejected }) end
+function Proto:finally(on_settled) return H.new_link(self, { on_settled = on_settled }) end
 
 function H.new_link(promise, handler)
   local state = H.state[promise]
