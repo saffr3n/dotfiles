@@ -5,8 +5,20 @@ local Proto = {}
 
 H.state = setmetatable({}, { __mode = 'k' })
 
+H.meta = {
+  __index = function(self, key)
+    if key == 'status' then return H.state[self][key] end
+    return Proto[key]
+  end,
+  __newindex = function(_, key)
+    if key == 'status' then
+      vim.notify(debug.traceback("TypeError: Cannot assign to read-only property 'status'", 2), vim.log.levels.ERROR)
+    end
+  end,
+}
+
 function M.new(executor)
-  local self = setmetatable({}, Proto)
+  local self = setmetatable({}, H.meta)
 
   H.state[self] = {
     status = 'pending',
