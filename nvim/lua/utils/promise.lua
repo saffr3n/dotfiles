@@ -36,6 +36,13 @@ function M.new(executor)
   return self
 end
 
+function M.resolve(value)
+  return M.new(function(resolve) resolve(value) end)
+end
+function M.reject(cause)
+  return M.new(function(_, reject) reject(cause) end)
+end
+
 function H.resolve(promise, value) H.settle(promise, 'resolved', value) end
 function H.reject(promise, cause) H.settle(promise, 'rejected', cause) end
 
