@@ -82,6 +82,8 @@
     xwayland.enable = true;
   };
 
+  programs.steam.enable = true;
+
   environment.systemPackages = with pkgs; [
     vim
     git
