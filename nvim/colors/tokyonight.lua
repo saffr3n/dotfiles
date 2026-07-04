@@ -8,9 +8,9 @@ local palette = {
 
   cyan1 = '#0db9d7',
 
-  green2 = '#1abc9c',
-  green3 = '#449dab',
-  green4 = '#243e4a',
+  green1 = '#243e4a',
+  green2 = '#449dab',
+  green3 = '#1abc9c',
 
   yellow = '#e0af68',
 
@@ -49,12 +49,12 @@ local theme = {
     error = palette.red3,
     warn = palette.yellow,
     info = palette.cyan1,
-    hint = palette.green2,
+    hint = palette.green3,
   },
 
   diff = {
-    add_bg = palette.green4,
-    add_fg = palette.green3,
+    add_bg = palette.green1,
+    add_fg = palette.green2,
     change_bg = palette.black3,
     text_bg = palette.blue4,
     change_fg = '#6183bb',
@@ -131,6 +131,7 @@ local hl = {
   Function = { fg = theme.blue },
   Identifier = { fg = theme.fg.main },
   Operator = { fg = theme.sky },
+  PreProc = { fg = theme.sky },
   Special = { fg = theme.cyan },
   Statement = { fg = theme.violet },
   String = { fg = theme.green },
