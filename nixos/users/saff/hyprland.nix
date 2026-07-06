@@ -10,6 +10,7 @@
     };
   };
 
+  xdg.dataFile."hypr/stubs".source = "${pkgs.hyprland}/share/hypr/stubs";
 
   xdg.configFile.hypr = {
     source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/hypr";
