@@ -21,6 +21,7 @@ hl.monitor({
 
 hl.on('hyprland.start', function()
   hl.exec_cmd('noctalia-shell')
+  hl.exec_cmd('udiskie --smart-tray --file-manager "' .. files .. '"')
 end)
 
 hl.config({

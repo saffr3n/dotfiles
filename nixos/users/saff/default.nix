@@ -20,8 +20,11 @@
       fzf
       ripgrep
 
+      udiskie
+
       imv
       mpv
+
       zen-browser
 
       nerd-fonts.jetbrains-mono
@@ -42,13 +45,6 @@
       extraConfig = {
         SCREENSHOTS = "${config.xdg.userDirs.pictures}/Screenshots";
       };
-    };
-  };
-
-  services = {
-    udiskie = {
-      enable = true;
-      settings.program_options.file_manager = "kitty -e yazi";
     };
   };
 
