@@ -113,7 +113,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 })
 
 vim.pack.add({ 'https://github.com/nvim-treesitter/nvim-treesitter' })
-require('nvim-treesitter').install({ 'nix' })
+require('nvim-treesitter').install({ 'nix', 'java' })
 vim.api.nvim_create_autocmd('FileType', {
   group = vim.api.nvim_create_augroup('ts-start', { clear = true }),
   callback = function(event)
