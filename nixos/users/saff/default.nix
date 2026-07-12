@@ -52,6 +52,7 @@
     enable = true;
     shellAliases = {
       l = "ls -aFhl";
+      bat = "bat --theme ansi";
     };
   };
 
