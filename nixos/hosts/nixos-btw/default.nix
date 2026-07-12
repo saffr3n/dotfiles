@@ -90,8 +90,9 @@
     man-pages
     man-pages-posix
 
-    vim
     git
+    gnumake
+    vim
   ];
 
   fonts.enableDefaultPackages = true;
