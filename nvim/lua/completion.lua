@@ -1,4 +1,4 @@
-local lsp_cmp_au = vim.api.nvim_create_augroup('lsp-cmp', { clear = true })
+local lsp_cmp_au = vim.api.nvim_create_augroup('saff.lsp-cmp', { clear = true })
 local is_lsp_cmp_on = false
 
 vim.api.nvim_create_autocmd('LspAttach', {
@@ -32,7 +32,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
   end,
 })
 
-local cmd_cmp_au = vim.api.nvim_create_augroup('wild-trigger', { clear = true })
+local cmd_cmp_au = vim.api.nvim_create_augroup('saff.cmd-cmp', { clear = true })
 local is_cmd_cmp_on = false
 
 vim.keymap.set('c', '<C-Space>', function()

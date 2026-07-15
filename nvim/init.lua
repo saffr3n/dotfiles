@@ -107,7 +107,7 @@ vim.keymap.set({ 'n', 'x' }, 'y', function()
   return 'y'
 end, { expr = true })
 vim.api.nvim_create_autocmd('TextYankPost', {
-  group = vim.api.nvim_create_augroup('yank', { clear = true }),
+  group = vim.api.nvim_create_augroup('saff.yank', { clear = true }),
   callback = function()
     vim.hl.hl_op()
     if not cur_pre_yank then return end
@@ -122,7 +122,7 @@ for _, file in ipairs(vim.api.nvim_get_runtime_file('lsp/*.lua', true)) do
 end
 
 vim.api.nvim_create_autocmd('LspAttach', {
-  group = vim.api.nvim_create_augroup('lsp-attach', { clear = true }),
+  group = vim.api.nvim_create_augroup('saff.lsp', { clear = true }),
   callback = function(event)
     vim.keymap.set('n', '<Leader>th', function()
       vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
