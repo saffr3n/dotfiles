@@ -3,6 +3,7 @@ require('vim._core.ui2').enable()
 vim.cmd.colorscheme('tokyonight')
 vim.cmd.packadd('nvim.undotree')
 
+require('treesitter')
 require('completion')
 
 vim.diagnostic.config({ severity_sort = true, virtual_text = true })
@@ -112,17 +113,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
     if not cur_pre_yank then return end
     vim.api.nvim_win_set_cursor(0, cur_pre_yank)
     cur_pre_yank = nil
-  end,
-})
-
-vim.pack.add({ 'https://github.com/nvim-treesitter/nvim-treesitter' })
-require('nvim-treesitter').install({ 'nix', 'java' })
-vim.api.nvim_create_autocmd('FileType', {
-  group = vim.api.nvim_create_augroup('ts-start', { clear = true }),
-  callback = function(event)
-    local lang = vim.treesitter.language.get_lang(event.match)
-    if not lang or not vim.treesitter.language.add(lang) then return end
-    vim.treesitter.start(event.buf, lang)
   end,
 })
 
