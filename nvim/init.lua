@@ -135,8 +135,35 @@ vim.api.nvim_create_autocmd('LspAttach', {
     ---@param lhs string
     ---@param rhs string | function
     local function map(mode, lhs, rhs) vim.keymap.set(mode, lhs, rhs, { buffer = event.buf }) end
-    map('i', '<C-Space>', vim.lsp.completion.get)
     map('n', '<Leader>th', function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) end)
+
+    local active = false
+    local au = vim.api.nvim_create_augroup('lsp-cmp', { clear = true })
+
     vim.lsp.completion.enable(true, event.data.client_id, event.buf)
+
+    map('i', '<C-Space>', function()
+      active = not active
+      if active then
+        vim.lsp.completion.get()
+      else
+        local ctrl_e = vim.api.nvim_replace_termcodes('<C-e>', true, false, true)
+        vim.api.nvim_feedkeys(ctrl_e, 'n', false)
+      end
+    end)
+
+    vim.api.nvim_create_autocmd('TextChangedI', {
+      group = au,
+      callback = function()
+        if active then vim.lsp.completion.get() end
+      end,
+    })
+
+    vim.api.nvim_create_autocmd('InsertLeave', {
+      group = au,
+      callback = function()
+        active = false
+      end,
+    })
   end,
 })
