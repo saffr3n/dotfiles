@@ -24,7 +24,7 @@ local M = {}
 local H = {}
 
 ---@class Promise<T>
----@field status Promise.Status
+---@field status Promise.Status -- `@readonly`
 local Proto = {}
 
 ---@type table<Promise<any>, { status: Promise.Status, value: any, reactions: Promise.Reaction[] }>
