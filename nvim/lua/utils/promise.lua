@@ -1,3 +1,5 @@
+---@alias Awaited<T> T extends Promise<infer U> and U or T
+
 ---@alias Promise.Status 'pending' | 'resolved' | 'rejected'
 
 ---@alias Promise.Handler.Resolved<T, U> fun(value: T): U
@@ -67,7 +69,7 @@ end
 
 ---@generic T
 ---@param value T
----@return Promise<T>
+---@return Promise<Awaited<T>>
 function M.resolve(value)
   return M.new(function(resolve) resolve(value) end)
 end
@@ -80,7 +82,12 @@ end
 
 ---@param promise Promise<any>
 ---@param value any
-function H.resolve(promise, value) H.settle(promise, 'resolved', value) end
+function H.resolve(promise, value)
+  if H.is_promise(value) then
+    return H.adopt(promise, value)
+  end
+  H.settle(promise, 'resolved', value)
+end
 
 ---@param promise Promise<any>
 ---@param cause any
@@ -131,8 +138,20 @@ function H.handle(promise, reaction)
 
     cb = reaction.on_settled
     if cb then
-      local ok, err = H.try(cb)
-      if not ok then return H.reject(reaction.next, err) end
+      local ok, res = H.try(cb)
+      if not ok then return H.reject(reaction.next, res) end
+      if H.is_promise(res) then
+        res:wait(function()
+          if state.status == 'resolved' then
+            H.resolve(reaction.next, state.value)
+          else
+            H.reject(reaction.next, state.value)
+          end
+        end):catch(function(cause)
+          H.reject(reaction.next, cause)
+        end)
+        return
+      end
     end
 
     if state.status == 'resolved' then
@@ -150,18 +169,29 @@ function H.try(fn, ...)
   return xpcall(fn, function(err) return debug.traceback(err, 2) end, ...)
 end
 
+---@param value any
+---@return_cast value Promise<any>
+function H.is_promise(value) return type(value) == 'table' and getmetatable(value) == H.meta end
+
+---@param target Promise<any>
+---@param source Promise<any>
+function H.adopt(target, source)
+  if target == source then return H.reject(target, 'TypeError: Promise resolved with itself') end
+  source:wait(function(value) H.resolve(target, value) end):catch(function(cause) H.reject(target, cause) end)
+end
+
 ---@generic U
 ---@param on_resolved Promise.Handler.Resolved<T, U>
----@return Promise<U>
+---@return Promise<Awaited<U>>
 function Proto:wait(on_resolved) return H.new_link(self, { on_resolved = on_resolved }) end
 
 ---@generic U
 ---@param on_rejected Promise.Handler.Rejected<U>
----@return Promise<T | U>
+---@return Promise<Awaited<T | U>>
 function Proto:catch(on_rejected) return H.new_link(self, { on_rejected = on_rejected }) end
 
 ---@param on_settled Promise.Handler.Settled
----@return Promise<T>
+---@return Promise<Awaited<T>>
 function Proto:finally(on_settled) return H.new_link(self, { on_settled = on_settled }) end
 
 ---@param promise Promise<any>
