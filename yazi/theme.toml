@@ -11,3 +11,5 @@ normal_main = { bg = 'blue', fg = 'black', bold = true }
 normal_alt = { bg = 'lightgray', fg = 'black', bold = true }
 select_main = { bg = 'red', fg = 'black', bold = true }
 select_alt = { bg = 'lightgray', fg = 'black', bold = true }
+unset_main = { bg = 'red', fg = 'black' , bold = true }
+unset_alt = { bg = 'lightgray', fg = 'black', bold = true }
