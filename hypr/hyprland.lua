@@ -1,6 +1,6 @@
 local mainMod  = 'SUPER + '
-local ipc      = 'noctalia-shell ipc call '
-local menu     = ipc .. 'launcher toggle'
+local ipc      = 'noctalia msg '
+local menu     = ipc .. 'panel-toggle launcher'
 local terminal = 'kitty'
 local files    = 'kitty -e yazi'
 
@@ -20,7 +20,7 @@ hl.monitor({
 })
 
 hl.on('hyprland.start', function()
-  hl.exec_cmd('noctalia-shell')
+  hl.exec_cmd('noctalia')
   hl.exec_cmd('udiskie --smart-tray --file-manager "' .. files .. '"')
 end)
 
@@ -152,7 +152,7 @@ hl.bind(mainMod .. 'F',         hl.dsp.window.fullscreen({ action = 'toggle' }))
 hl.bind(mainMod .. 'V',         hl.dsp.window.float({ action = 'toggle' }))
 hl.bind(mainMod .. 'P',         hl.dsp.window.pseudo({ action = 'toggle' }))
 hl.bind(mainMod .. 'G',         hl.dsp.layout('togglesplit')) -- dwindle
-hl.bind(mainMod .. 'M',         hl.dsp.exec_cmd(ipc .. 'sessionMenu toggle'))
+hl.bind(mainMod .. 'M',         hl.dsp.exec_cmd(ipc .. 'panel-toggle session'))
 
 hl.bind('Print', hl.dsp.exec_cmd('grimblast -nf copysave area'))
 
@@ -194,10 +194,10 @@ hl.bind(mainMod .. 'mouse_up',   hl.dsp.focus({ workspace = 'e-1' }))
 hl.bind(mainMod .. 'mouse:272', hl.dsp.window.drag(),   { mouse = true })
 hl.bind(mainMod .. 'mouse:273', hl.dsp.window.resize(), { mouse = true })
 
-hl.bind('XF86AudioRaiseVolume',  hl.dsp.exec_cmd(ipc .. 'volume increase'),     { locked = true, repeating = true })
-hl.bind('XF86AudioLowerVolume',  hl.dsp.exec_cmd(ipc .. 'volume decrease'),     { locked = true, repeating = true })
-hl.bind('XF86MonBrightnessUp',   hl.dsp.exec_cmd(ipc .. 'brightness increase'), { locked = true, repeating = true })
-hl.bind('XF86MonBrightnessDown', hl.dsp.exec_cmd(ipc .. 'brightness decrease'), { locked = true, repeating = true })
+hl.bind('XF86AudioRaiseVolume',  hl.dsp.exec_cmd(ipc .. 'volume-up'),       { locked = true, repeating = true })
+hl.bind('XF86AudioLowerVolume',  hl.dsp.exec_cmd(ipc .. 'volume-down'),     { locked = true, repeating = true })
+hl.bind('XF86MonBrightnessUp',   hl.dsp.exec_cmd(ipc .. 'brightness-up'),   { locked = true, repeating = true })
+hl.bind('XF86MonBrightnessDown', hl.dsp.exec_cmd(ipc .. 'brightness-down'), { locked = true, repeating = true })
 
 -- Ignore maximize requests from all apps
 hl.window_rule({
