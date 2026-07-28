@@ -154,7 +154,7 @@ hl.bind(mainMod .. 'P',         hl.dsp.window.pseudo({ action = 'toggle' }))
 hl.bind(mainMod .. 'G',         hl.dsp.layout('togglesplit')) -- dwindle
 hl.bind(mainMod .. 'M',         hl.dsp.exec_cmd(ipc .. 'panel-toggle session'))
 
-hl.bind('Print', hl.dsp.exec_cmd('grimblast -nf copysave area'))
+hl.bind('Print', hl.dsp.exec_cmd(ipc .. 'screenshot-region'))
 
 hl.bind('ALT + Tab',         hl.dsp.window.cycle_next({ next = true  }))
 hl.bind('ALT + SHIFT + Tab', hl.dsp.window.cycle_next({ next = false }))
