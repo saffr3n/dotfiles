@@ -23,6 +23,7 @@ position = "left"
 radius_bottom_left = 0
 radius_top_left = 0
 start = [ "launcher", "workspaces", "media" ]
+thickness = 36
 widget_spacing = 4
 
     [[bar.default.capsule_group]]
