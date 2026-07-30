@@ -1,5 +1,6 @@
 { config, pkgs, ... }: {
   imports = [
+    ./bat.nix
     ./btop.nix
     ./git.nix
     ./hyprland.nix
@@ -14,7 +15,6 @@
     homeDirectory = "/home/${config.home.username}";
 
     packages = with pkgs; [
-      bat
       fastfetch
       fd
       fzf
@@ -52,7 +52,6 @@
     enable = true;
     shellAliases = {
       l = "ls -aFhl";
-      bat = "bat --theme ansi";
     };
   };
 
