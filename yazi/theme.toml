@@ -4,7 +4,7 @@ border_style = { fg = 'blue' }
 
 [tabs]
 active = { bg = 'blue', fg = 'black', bold = true }
-inactive = { bg = '#1a1b26', fg = 'blue' }
+inactive = { bg = 'black', fg = 'blue' }
 
 [mode]
 normal_main = { bg = 'blue', fg = 'black', bold = true }
