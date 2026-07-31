@@ -21,7 +21,10 @@
 
   services.udisks2.enable = true;
 
-  hardware.bluetooth.enable = true;
+  hardware.bluetooth = {
+    enable = true;
+    powerOnBoot = false;
+  };
 
   systemd.network.wait-online.enable = false;
   networking = {
