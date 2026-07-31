@@ -13,3 +13,7 @@ select_main = { bg = 'red', fg = 'black', bold = true }
 select_alt = { bg = 'lightgray', fg = 'black', bold = true }
 unset_main = { bg = 'red', fg = 'black' , bold = true }
 unset_alt = { bg = 'lightgray', fg = 'black', bold = true }
+
+[status]
+progress_normal = { bg = 'black', fg = 'green' }
+progress_error = { bg = 'black', fg = 'red' }
