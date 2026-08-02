@@ -1,3 +1,8 @@
+vim.cmd.highlight('clear')
+if vim.fn.exists('syntax_on') then
+  vim.cmd.syntax('reset')
+end
+
 local palette = {
   black1 = '#16161e',
   black2 = '#1a1b26',
