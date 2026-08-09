@@ -26,7 +26,7 @@ local M = {}
 local H = {}
 
 ---@class Promise<T>
----@field status Promise.Status -- `@readonly`
+---@field status Promise.Status `@readonly`
 local Proto = {}
 
 ---@type table<Promise<any>, { status: Promise.Status, value: any, reactions: Promise.Reaction[] }>
@@ -141,7 +141,7 @@ function H.handle(promise, reaction)
       local ok, res = H.try(cb)
       if not ok then return H.reject(reaction.next, res) end
       if H.is_promise(res) then
-        res:wait(function()
+        res:next(function()
           if state.status == 'resolved' then
             H.resolve(reaction.next, state.value)
           else
@@ -177,13 +177,13 @@ function H.is_promise(value) return type(value) == 'table' and getmetatable(valu
 ---@param source Promise<any>
 function H.adopt(target, source)
   if target == source then return H.reject(target, 'TypeError: Promise resolved with itself') end
-  source:wait(function(value) H.resolve(target, value) end):catch(function(cause) H.reject(target, cause) end)
+  source:next(function(value) H.resolve(target, value) end):catch(function(cause) H.reject(target, cause) end)
 end
 
 ---@generic U
 ---@param on_resolved Promise.Handler.Resolved<T, U>
 ---@return Promise<Awaited<U>>
-function Proto:wait(on_resolved) return H.new_link(self, { on_resolved = on_resolved }) end
+function Proto:next(on_resolved) return H.new_link(self, { on_resolved = on_resolved }) end
 
 ---@generic U
 ---@param on_rejected Promise.Handler.Rejected<U>
