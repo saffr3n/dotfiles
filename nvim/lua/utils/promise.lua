@@ -84,6 +84,27 @@ function M.reject(cause)
   return M.new(function(_, reject) reject(cause) end)
 end
 
+---@generic T
+---@param promises T
+---@return Promise<{ [I in keyof T]: Awaited<T[I]> }>
+function M.all(promises)
+  return M.new(function(resolve, reject)
+    local res = {}
+    local remaining = #promises
+    if remaining == 0 then return resolve(res) end
+
+    for i, promise in ipairs(promises) do
+      promise
+        :wait(function(val)
+          res[i] = val
+          remaining = remaining - 1
+          if remaining == 0 then resolve(res) end
+        end)
+        :catch(function(err) reject(err) end)
+    end
+  end)
+end
+
 ---@generic T, U
 ---@param fn fun(...: T..., cb: AsyncResultCallback<U>): any
 ---@return fun(...: T...): Promise<Awaited<U>>
