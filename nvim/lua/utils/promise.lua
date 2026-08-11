@@ -1,5 +1,7 @@
 ---@alias Awaited<T> T extends Promise<infer U> and U or T
 
+---@alias AsyncResultCallback<T> fun(error?: any, value?: T): any
+
 ---@alias Promise.Status 'pending' | 'resolved' | 'rejected'
 
 ---@alias Promise.Handler.Resolved<T, U> fun(value: T): U
@@ -80,6 +82,27 @@ end
 ---@return Promise<never>
 function M.reject(cause)
   return M.new(function(_, reject) reject(cause) end)
+end
+
+---@generic T, U
+---@param fn fun(...: T..., cb: AsyncResultCallback<U>): any
+---@return fun(...: T...): Promise<Awaited<U>>
+---@overload fun(fn: fun(cb: AsyncResultCallback<U>): any): fun(): Promise<Awaited<U>>
+function M.promisify(fn)
+  return function(...)
+    local args = { ... }
+    return M.new(function(resolve, reject)
+      table.insert(args, function(err, val)
+        if err then
+          reject(err)
+        else
+          resolve(val)
+        end
+      end)
+      local ok, err = pcall(fn, unpack(args))
+      if not ok then reject(err) end
+    end)
+  end
 end
 
 ---@param promise Promise<any>
