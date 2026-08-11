@@ -8,6 +8,8 @@
 
 ---@alias Promise.Handler.Settled fun()
 
+---@alias Promise.Handler<T, U> Promise.Handler.Resolved<T, U> | Promise.Handler.Rejected<U> | Promise.Handler.Settled
+
 ---@class (private) Promise.Reaction.Handler.Resolved
 ---@field on_resolved? Promise.Handler.Resolved<any, any>
 
