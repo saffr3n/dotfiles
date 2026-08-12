@@ -20,8 +20,13 @@ hl.monitor({
 })
 
 hl.on('hyprland.start', function()
+  hl.exec_cmd('systemctl --user start hyprland-session.target')
   hl.exec_cmd('noctalia')
   hl.exec_cmd('udiskie --smart-tray --file-manager "' .. files .. '"')
+end)
+
+hl.on('hyprland.shutdown', function()
+  os.execute('systemctl --user stop hyprland-session.target && sleep 0.1')
 end)
 
 hl.config({
