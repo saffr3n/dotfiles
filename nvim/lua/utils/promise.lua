@@ -95,7 +95,7 @@ function M.all(promises)
 
     for i, promise in ipairs(promises) do
       promise
-        :wait(function(val)
+        :next(function(val)
           res[i] = val
           remaining = remaining - 1
           if remaining == 0 then resolve(res) end
