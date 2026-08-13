@@ -106,7 +106,7 @@ directory = "/home/saff/Pictures/Screenshots"
 
 [theme]
 builtin = "Tokyo-Night"
-mode = "dark"
+mode = "auto"
 source = "builtin"
 wallpaper_scheme = "m3-content"
 
