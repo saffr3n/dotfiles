@@ -58,7 +58,7 @@ validate = [ "Return", "KP_Enter", "space", "Ctrl+y" ]
 auto_locate = true
 
 [lockscreen]
-blurred_desktop = true
+blurred_desktop = false
 fingerprint = false
 
 [lockscreen_widgets]
