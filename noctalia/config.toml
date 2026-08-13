@@ -115,6 +115,8 @@ wallpaper_scheme = "m3-content"
     community_ids = [ "zen-browser" ]
 
 [wallpaper]
+directory_dark = "/home/saff/Pictures/Wallpapers/Dark"
+directory_light = "/home/saff/Pictures/Wallpapers/Light"
 transition_on_startup = true
 
     [wallpaper.automation]
