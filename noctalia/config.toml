@@ -22,7 +22,7 @@ padding = 8
 position = "left"
 radius_bottom_left = 0
 radius_top_left = 0
-start = [ "launcher", "workspaces", "media" ]
+start = [ "launcher", "taskbar", "media" ]
 thickness = 36
 widget_spacing = 4
 
@@ -151,6 +151,10 @@ show_label = false
 
 [widget.ram]
 show_label = false
+
+[widget.taskbar]
+group_by_workspace = true
+inactive_opacity = 0.8
 
 [widget.temp]
 show_label = false
