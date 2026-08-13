@@ -6,80 +6,117 @@ end
 vim.g.colors_name = 'tokyonight'
 
 local palette = {
-  black1 = '#16161e',
-  black2 = '#1a1b26',
-  black3 = '#1f2231',
+  neutral1 = '#15161e',
+  neutral2 = '#16161e',
+  neutral3 = '#1a1b26',
+  neutral4 = '#1f2231',
+  neutral5 = '#292e42',
+  neutral6 = '#3b4261',
 
-  blue4 = '#394b70',
-  blue6 = '#565f89',
+  muted1   = '#283457',
+  muted2   = '#394b70',
+  muted3   = '#545c7e',
+  muted4   = '#565f89',
+  muted5   = '#a9b1d6',
+  muted6   = '#c0caf5',
 
-  cyan1 = '#0db9d7',
+  blue1    = '#3d59a1',
+  blue2    = '#6183bb',
+  blue3    = '#7aa2f7',
 
-  green1 = '#243e4a',
-  green2 = '#449dab',
-  green3 = '#1abc9c',
+  cyan1    = '#0db9d7',
+  cyan2    = '#2ac3de',
+  cyan3    = '#7dcfff',
+  cyan4    = '#89ddff',
 
-  yellow = '#e0af68',
+  teal1    = '#243e4a',
+  teal2    = '#449dab',
+  teal3    = '#1abc9c',
 
-  red3 = '#db4b4b',
+  green    = '#9ece6a',
 
-  white1 = '#a9b1d6',
-  white2 = '#c0caf5',
+  yellow   = '#e0af68',
+
+  orange   = '#ff9e64',
+
+  red1     = '#4a272f',
+  red2     = '#914c54',
+  red3     = '#db4b4b',
+
+  purple   = '#bb9af7',
 }
 
-local theme = {
+local theme = {}
+
+theme.bg = {
+  main = palette.neutral3,
+  alt  = palette.neutral2,
+}
+
+theme.fg = {
+  main   = palette.muted6,
+  alt    = palette.muted5,
+  invert = palette.neutral1,
+}
+
+theme.ui = {
+  curline = palette.neutral5,
+  folded  = palette.neutral6,
+  visual  = palette.muted1,
+  search  = palette.blue1,
+  nontext = palette.muted3,
+}
+
+theme.accent = {
+  blue    = palette.blue3,
+  cyan    = palette.cyan1,
+  teal    = palette.teal3,
+  green   = palette.green,
+  yellow  = palette.yellow,
+  orange  = palette.orange,
+  red     = palette.red3,
+  magenta = palette.purple,
+}
+
+theme.syntax = {
+  comment  = palette.muted4,
+  special  = palette.cyan2,
+  preproc  = palette.cyan3,
+  operator = palette.cyan4,
+}
+
+theme.diff = {
   bg = {
-    main = palette.black2,
-    alt = palette.black1,
+    add    = palette.teal1,
+    change = palette.neutral4,
+    text   = palette.muted2,
+    delete = palette.red1,
   },
 
   fg = {
-    main = palette.white2,
-    alt = palette.white1,
-    dim = palette.blue6 ,
-    inverse = palette.black1,
+    add    = palette.teal2,
+    change = palette.blue2,
+    delete = palette.red2,
   },
+}
 
-  over1 = '#292e42', -- CursorLine
-  over2 = '#283457', -- Visual / QuickFixLine
-  over3 = '#3b4261', -- Folded
-  over4 = '#3d59a1', -- Search
-
-  blue = '#7aa2f7',
-  cyan = '#2ac3de',
-  green = '#9ece6a',
-  orange = '#ff9e64',
-  sky = '#89ddff',
-  violet = '#bb9af7',
-
-  diag = {
-    error = palette.red3,
-    warn = palette.yellow,
-    info = palette.cyan1,
-    hint = palette.green3,
-  },
-
-  diff = {
-    add_bg = palette.green1,
-    add_fg = palette.green2,
-    change_bg = palette.black3,
-    text_bg = palette.blue4,
-    change_fg = '#6183bb',
-    delete_bg = '#4a272f',
-    delete_fg = '#914c54',
-  },
+theme.diag = {
+  error = theme.accent.red,
+  warn  = theme.accent.yellow,
+  info  = theme.accent.cyan,
+  hint  = theme.accent.teal,
 }
 
 local hl = {
   Normal = { bg = theme.bg.main, fg = theme.fg.main },
-  Visual = { bg = theme.over2 },
-  Search = { bg = theme.over4, fg = theme.fg.main },
-  CurSearch = { bg = theme.orange, fg = theme.fg.inverse },
-  CursorLine = { bg = theme.over1 },
-  Folded = { bg = theme.over3, fg = theme.blue },
-  WinSeparator = { fg = theme.blue },
-  MatchParen = { fg = theme.orange, bold = true },
-  NonText = { fg = theme.fg.dim },
+  Visual = { bg = theme.ui.visual },
+  Search = { bg = theme.ui.search, fg = theme.fg.main },
+  CurSearch = { bg = theme.accent.orange, fg = theme.fg.invert },
+  CursorLine = { bg = theme.ui.curline },
+  Folded = { bg = theme.ui.folded, fg = theme.accent.blue },
+  WinSeparator = { fg = theme.accent.blue },
+  MatchParen = { fg = theme.accent.orange, bold = true },
+  NonText = { fg = theme.ui.nontext },
 
   NormalFloat = { bg = theme.bg.alt, fg = theme.fg.main },
   FloatBorder = { link = 'WinSeparator' },
@@ -87,20 +124,20 @@ local hl = {
 
   Pmenu = { link = 'NormalFloat' },
   PmenuBorder = { link = 'FloatBorder' },
-  PmenuThumb = { bg = theme.blue },
+  PmenuThumb = { bg = theme.accent.blue },
   PmenuSel = { link = 'CursorLine' },
-  PmenuMatch = { fg = theme.blue, bold = true },
+  PmenuMatch = { fg = theme.accent.blue, bold = true },
 
   SignColumn = { link = 'NonText' },
-  CursorLineSign = { fg = theme.orange, bold = true },
+  CursorLineSign = { fg = theme.accent.orange, bold = true },
   LineNr = { link = 'SignColumn' },
   CursorLineNr = { link = 'CursorLineSign' },
   CursorLineFold = { link = 'CursorLineSign' },
 
   StatusLine = { bg = theme.bg.alt, fg = theme.fg.alt },
-  StatusLineNC = { bg = theme.bg.alt, fg = theme.fg.dim },
+  StatusLineNC = { bg = theme.bg.alt, fg = theme.ui.nontext },
 
-  TabLineSel = { bg = theme.blue, fg = theme.fg.inverse, bold = true },
+  TabLineSel = { bg = theme.accent.blue, fg = theme.fg.invert, bold = true },
 
   DiagnosticError = { fg = theme.diag.error },
   DiagnosticWarn = { fg = theme.diag.warn },
@@ -111,7 +148,7 @@ local hl = {
   DiagnosticUnderlineInfo = { sp = theme.diag.info, underline = true },
   DiagnosticUnderlineHint = { sp = theme.diag.hint, underline = true },
 
-  QuickFixLine = { bg = theme.over2, bold = true },
+  QuickFixLine = { bg = theme.ui.visual, bold = true },
   Error = { link = 'DiagnosticError' },
 
   MsgArea = { fg = theme.fg.alt },
@@ -119,30 +156,30 @@ local hl = {
   ErrorMsg = { link = 'DiagnosticError' },
   WarningMsg = { link = 'DiagnosticWarn' },
   OkMsg = { link = 'DiagnosticHint' },
-  MoreMsg = { fg = theme.blue },
-  Title = { fg = theme.blue, bold = true },
+  MoreMsg = { fg = theme.accent.blue },
+  Title = { fg = theme.accent.blue, bold = true },
   Question = { link = 'MoreMsg' },
 
-  DiffAdd = { bg = theme.diff.add_bg },
-  DiffChange = { bg = theme.diff.change_bg },
-  DiffDelete = { bg = theme.diff.delete_bg },
-  DiffText = { bg = theme.diff.text_bg },
-  Added = { fg = theme.diff.add_fg },
-  Changed = { fg = theme.diff.change_fg },
-  Removed = { fg = theme.diff.delete_fg },
+  DiffAdd = { bg = theme.diff.bg.add },
+  DiffChange = { bg = theme.diff.bg.change },
+  DiffDelete = { bg = theme.diff.bg.delete },
+  DiffText = { bg = theme.diff.bg.text },
+  Added = { fg = theme.diff.fg.add },
+  Changed = { fg = theme.diff.fg.change },
+  Removed = { fg = theme.diff.fg.delete },
 
-  Comment = { link = 'NonText' },
-  Constant = { fg = theme.orange },
+  Comment = { fg = theme.syntax.comment },
+  Constant = { fg = theme.accent.orange },
   Delimiter = { fg = theme.fg.alt },
-  Directory = { fg = theme.blue },
-  Function = { fg = theme.blue },
+  Directory = { fg = theme.accent.blue },
+  Function = { fg = theme.accent.blue },
   Identifier = { fg = theme.fg.main },
-  Operator = { fg = theme.sky },
-  PreProc = { fg = theme.sky },
-  Special = { fg = theme.cyan },
-  Statement = { fg = theme.violet },
-  String = { fg = theme.green },
-  Type = { fg = theme.cyan },
+  Operator = { fg = theme.syntax.operator },
+  PreProc = { fg = theme.syntax.preproc },
+  Special = { fg = theme.syntax.special },
+  Statement = { fg = theme.accent.magenta },
+  String = { fg = theme.accent.green },
+  Type = { link = 'Special' },
   ['@constructor'] = { link = 'Delimiter' },
   ['@variable'] = { link = 'Identifier' },
 
