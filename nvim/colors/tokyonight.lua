@@ -5,98 +5,106 @@ end
 
 vim.g.colors_name = 'tokyonight'
 
+local mode = vim.o.background
+
+---@class (private) Palette
 local palette = {
-  neutral1 = '#15161e',
-  neutral2 = '#16161e',
-  neutral3 = '#1a1b26',
-  neutral4 = '#1f2231',
-  neutral5 = '#292e42',
-  neutral6 = '#3b4261',
+  neutral1 = { dark = '#15161e', light = '#b4b5b9' },
+  neutral2 = { dark = '#16161e', light = '#d0d5e3' },
+  neutral3 = { dark = '#1a1b26', light = '#e1e2e7' },
+  neutral4 = { dark = '#1f2231', light = '#d5d9e4' },
+  neutral5 = { dark = '#292e42', light = '#c4c8da' },
+  neutral6 = { dark = '#3b4261', light = '#a8aecb' },
 
-  muted1   = '#283457',
-  muted2   = '#394b70',
-  muted3   = '#545c7e',
-  muted4   = '#565f89',
-  muted5   = '#a9b1d6',
-  muted6   = '#c0caf5',
+  muted1   = { dark = '#283457', light = '#b7c1e3' },
+  muted2   = { dark = '#394b70', light = '#92a6d5' },
+  muted3   = { dark = '#545c7e', light = '#8990b3' },
+  muted4   = { dark = '#565f89', light = '#848cb5' },
+  muted5   = { dark = '#a9b1d6', light = '#6172b0' },
+  muted6   = { dark = '#c0caf5', light = '#3760bf' },
 
-  blue1    = '#3d59a1',
-  blue2    = '#6183bb',
-  blue3    = '#7aa2f7',
+  blue1    = { dark = '#3d59a1', light = '#7890dd' },
+  blue2    = { dark = '#6183bb', light = '#506d9c' },
+  blue3    = { dark = '#7aa2f7', light = '#2e7de9' },
 
-  cyan1    = '#0db9d7',
-  cyan2    = '#2ac3de',
-  cyan3    = '#7dcfff',
-  cyan4    = '#89ddff',
+  cyan1    = { dark = '#0db9d7', light = '#07879d' },
+  cyan2    = { dark = '#2ac3de', light = '#188092' },
+  cyan3    = { dark = '#7dcfff', light = '#007197' },
+  cyan4    = { dark = '#89ddff', light = '#006a83' },
 
-  teal1    = '#243e4a',
-  teal2    = '#449dab',
-  teal3    = '#1abc9c',
+  teal1    = { dark = '#243e4a', light = '#b7ced5' },
+  teal2    = { dark = '#449dab', light = '#4197a4' },
+  teal3    = { dark = '#1abc9c', light = '#118c74' },
 
-  green    = '#9ece6a',
+  green    = { dark = '#9ece6a', light = '#587539' },
 
-  yellow   = '#e0af68',
+  yellow   = { dark = '#e0af68', light = '#8c6c3e' },
 
-  orange   = '#ff9e64',
+  orange   = { dark = '#ff9e64', light = '#b15c00' },
 
-  red1     = '#4a272f',
-  red2     = '#914c54',
-  red3     = '#db4b4b',
+  red1     = { dark = '#4a272f', light = '#dababe' },
+  red2     = { dark = '#914c54', light = '#c47981' },
+  red3     = { dark = '#db4b4b', light = '#c64343' },
 
-  purple   = '#bb9af7',
+  purple   = { dark = '#bb9af7', light = '#9854f1' },
 }
+
+---@param name (keyof Palette)
+local function color(name)
+  return palette[name][mode]
+end
 
 local theme = {}
 
 theme.bg = {
-  main = palette.neutral3,
-  alt  = palette.neutral2,
+  main = color('neutral3'),
+  alt  = color('neutral2'),
 }
 
 theme.fg = {
-  main   = palette.muted6,
-  alt    = palette.muted5,
-  invert = palette.neutral1,
+  main   = color('muted6'),
+  alt    = color('muted5'),
+  invert = color('neutral1'),
 }
 
 theme.ui = {
-  curline = palette.neutral5,
-  folded  = palette.neutral6,
-  visual  = palette.muted1,
-  search  = palette.blue1,
-  nontext = palette.muted3,
+  curline = color('neutral5'),
+  folded  = color('neutral6'),
+  visual  = color('muted1'),
+  search  = color('blue1'),
+  nontext = color('muted3'),
 }
 
 theme.accent = {
-  blue    = palette.blue3,
-  cyan    = palette.cyan1,
-  teal    = palette.teal3,
-  green   = palette.green,
-  yellow  = palette.yellow,
-  orange  = palette.orange,
-  red     = palette.red3,
-  magenta = palette.purple,
+  blue    = color('blue3'),
+  cyan    = color('cyan1'),
+  teal    = color('teal3'),
+  green   = color('green'),
+  yellow  = color('yellow'),
+  orange  = color('orange'),
+  red     = color('red3'),
+  magenta = color('purple'),
 }
 
 theme.syntax = {
-  comment  = palette.muted4,
-  special  = palette.cyan2,
-  preproc  = palette.cyan3,
-  operator = palette.cyan4,
+  comment  = color('muted4'),
+  special  = color('cyan2'),
+  preproc  = color('cyan3'),
+  operator = color('cyan4'),
 }
 
 theme.diff = {
   bg = {
-    add    = palette.teal1,
-    change = palette.neutral4,
-    text   = palette.muted2,
-    delete = palette.red1,
+    add    = color('teal1'),
+    change = color('neutral4'),
+    text   = color('muted2'),
+    delete = color('red1'),
   },
 
   fg = {
-    add    = palette.teal2,
-    change = palette.blue2,
-    delete = palette.red2,
+    add    = color('teal2'),
+    change = color('blue2'),
+    delete = color('red2'),
   },
 }
 
