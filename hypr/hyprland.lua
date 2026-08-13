@@ -126,8 +126,7 @@ hl.bind(mainMod .. 'M',         hl.dsp.exec_cmd(ipc .. 'panel-toggle session'))
 
 hl.bind('Print', hl.dsp.exec_cmd(ipc .. 'screenshot-region'))
 
-hl.bind('ALT + Tab',         hl.dsp.window.cycle_next({ next = true  }))
-hl.bind('ALT + SHIFT + Tab', hl.dsp.window.cycle_next({ next = false }))
+hl.bind('ALT + Tab', hl.dsp.exec_cmd(ipc .. 'window-switcher'))
 
 hl.bind(mainMod .. 'H', hl.dsp.focus({ direction = 'left'  }))
 hl.bind(mainMod .. 'J', hl.dsp.focus({ direction = 'down'  }))
