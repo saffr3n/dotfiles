@@ -52,7 +52,6 @@
       require_dnssec = true;
       require_nolog = true;
       require_nofilter = true;
-      server_names = [ "cloudflare" ];
     };
   };
 
