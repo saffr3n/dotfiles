@@ -23,7 +23,7 @@ position = "left"
 radius_bottom_left = 0
 radius_top_left = 0
 start = [ "launcher", "taskbar", "media" ]
-thickness = 36
+thickness = 40
 widget_spacing = 4
 
     [[bar.default.capsule_group]]
