@@ -3,6 +3,8 @@ if vim.fn.exists('syntax_on') then
   vim.cmd.syntax('reset')
 end
 
+vim.g.colors_name = 'tokyonight'
+
 local palette = {
   black1 = '#16161e',
   black2 = '#1a1b26',
