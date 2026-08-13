@@ -4,14 +4,6 @@ local menu     = ipc .. 'panel-toggle launcher'
 local terminal = 'kitty'
 local files    = 'kitty -e yazi'
 
-local colors = {
-  primary   = 'rgb(7aa2f7)',
-  secondary = 'rgb(bb9af7)',
-  error     = 'rgb(f7768e)',
-  surface   = 'rgb(1a1b26)',
-  shadow    = 'rgba(1a1b2699)',
-}
-
 hl.monitor({
   output   = '',
   mode     = 'preferred',
@@ -31,37 +23,12 @@ end)
 
 hl.config({
   general = {
-    gaps_in  = 2,
-    gaps_out = 4,
-
+    gaps_in          = 2,
+    gaps_out         = 4,
     border_size      = 2,
     resize_on_border = true,
-
-    col = {
-      active_border   = colors.primary,
-      inactive_border = colors.surface,
-    },
-
-    allow_tearing = false,
-    layout        = 'dwindle',
-  },
-
-  group = {
-    col = {
-      border_active          = colors.secondary,
-      border_inactive        = colors.surface,
-      border_locked_active   = colors.error,
-      border_locked_inactive = colors.surface,
-    },
-
-    groupbar = {
-      col = {
-        active          = colors.secondary,
-        inactive        = colors.surface,
-        locked_active   = colors.error,
-        locked_inactive = colors.surface,
-      },
-    },
+    allow_tearing    = false,
+    layout           = 'dwindle',
   },
 
   decoration = {
@@ -74,7 +41,6 @@ hl.config({
       enabled      = true,
       range        = 4,
       render_power = 3,
-      color        = colors.shadow,
     },
 
     blur = {
@@ -123,7 +89,6 @@ hl.config({
   misc = {
     disable_hyprland_logo    = true,
     disable_splash_rendering = true,
-    background_color         = colors.surface,
   },
 })
 
@@ -224,3 +189,5 @@ hl.window_rule({
   },
   no_focus = true,
 })
+
+require('colorscheme').apply('dark')
