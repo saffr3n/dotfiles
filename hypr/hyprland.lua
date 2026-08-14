@@ -4,6 +4,8 @@ local menu     = ipc .. 'panel-toggle launcher'
 local terminal = 'kitty'
 local files    = 'kitty -e yazi'
 
+require('colorscheme').apply('dark')
+
 hl.monitor({
   output   = '',
   mode     = 'preferred',
@@ -205,5 +207,3 @@ hl.layer_rule({
   blur         = true,
   blur_popups  = true,
 })
-
-require('colorscheme').apply('dark')
