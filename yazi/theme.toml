@@ -1,6 +1,9 @@
 [mgr]
 cwd = { fg = 'white' }
 border_style = { fg = 'blue' }
+count_copied = { bg = 'green', fg = 'black' }
+count_cut = { bg = 'red', fg = 'black' }
+count_selected = { bg = 'yellow', fg = 'black' }
 
 [tabs]
 active = { bg = 'blue', fg = 'black', bold = true }
