@@ -48,8 +48,8 @@ widget_spacing = 4
 warning_threshold = 20
 
 [hooks]
-started = "hyprctl eval \"require('color-scheme').apply('$(noctalia msg theme-mode-get)')\""
-theme_mode_changed = "hyprctl eval \"require('color-scheme').apply('$(noctalia msg theme-mode-get)')\"; noctalia msg wallpaper-random"
+started = "hyprctl eval \"require('colorscheme').apply('$(noctalia msg theme-mode-get)')\""
+theme_mode_changed = "hyprctl eval \"require('colorscheme').apply('$(noctalia msg theme-mode-get)')\"; noctalia msg wallpaper-random"
 
 [keybinds]
 down = [ "Down", "Ctrl+j" ]
