@@ -53,6 +53,9 @@
     shellAliases = {
       l = "ls -aFhl";
     };
+    bashrcExtra = ''
+      stty -ixon
+    '';
   };
 
   home.pointerCursor = {
