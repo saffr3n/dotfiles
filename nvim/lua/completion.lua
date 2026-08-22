@@ -16,7 +16,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
       end
     end, { buf = event.buf })
 
-    vim.api.nvim_create_autocmd('TextChangedI', {
+    vim.api.nvim_create_autocmd('CursorMovedI', {
       group = lsp_cmp_au,
       callback = function()
         if is_lsp_cmp_on then vim.lsp.completion.get() end
