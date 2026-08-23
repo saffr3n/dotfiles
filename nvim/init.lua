@@ -5,6 +5,7 @@ vim.cmd.packadd('nvim.undotree')
 
 vim.pack.add({ 'https://github.com/saffr3n/meanwhile.nvim' })
 
+require('opts')
 require('treesitter')
 require('completion')
 
@@ -55,44 +56,6 @@ vim.keymap.set('n', '<C-j>', ':horizontal resize -1<CR>')
 vim.keymap.set('n', '<C-k>', ':horizontal resize +1<CR>')
 vim.keymap.set('n', '<C-l>', ':vertical resize +1<CR>')
 vim.keymap.set('n', '<Leader>e', ':20Lex<CR>')
-
-vim.g.netrw_banner = 0
-vim.g.netrw_liststyle = 3
-vim.g.netrw_sizestyle = 'H'
-vim.g.netrw_altfile = 1
-vim.g.netrw_browse_split = 4
-vim.o.title = true
-vim.o.number = true
-vim.o.relativenumber = true
-vim.o.signcolumn = 'yes'
-vim.o.laststatus = 3
-vim.o.scrolloff = 8
-vim.o.cursorline = true
-vim.o.breakindent = true
-vim.o.linebreak = true
-vim.o.splitright = true
-vim.o.splitbelow = true
-vim.o.winborder = 'rounded'
-vim.o.pumborder = 'rounded'
-vim.o.list = true
-vim.o.listchars = 'tab:> ,trail:·,nbsp:+'
-vim.o.fillchars = 'eob: '
-vim.o.shiftwidth = 2
-vim.o.softtabstop = -1
-vim.o.expandtab = true
-vim.o.confirm = true
-vim.o.undofile = true
-vim.o.backupcopy = 'yes'
-vim.o.clipboard = 'unnamedplus'
-vim.o.ignorecase = true
-vim.o.smartcase = true
-vim.o.inccommand = 'split'
-vim.o.completeopt = 'menuone,noselect,fuzzy,popup'
-vim.o.wildmode = 'noselect:lastused,full'
-vim.o.wildoptions = 'pum,tagfile,fuzzy'
-vim.o.cmdheight = 0
-vim.o.exrc = true
-vim.opt.path:append("**")
 
 ---@type [integer, integer]?
 local cur_pre_yank
