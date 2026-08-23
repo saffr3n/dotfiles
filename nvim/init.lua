@@ -93,6 +93,7 @@ vim.o.completeopt = 'menuone,noselect,fuzzy,popup'
 vim.o.wildmode = 'noselect:lastused,full'
 vim.o.wildoptions = 'pum,tagfile,fuzzy'
 vim.o.cmdheight = 0
+vim.o.exrc = true
 vim.opt.path:append("**")
 
 ---@type [integer, integer]?
