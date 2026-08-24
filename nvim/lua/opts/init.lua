@@ -1,6 +1,7 @@
 local o = vim.o
 
 require('opts.netrw')
+require('opts.path')
 
 o.title      = true
 o.exrc       = true
@@ -42,5 +43,3 @@ o.inccommand = 'split'
 o.completeopt = 'menuone,noselect,fuzzy,popup'
 o.wildmode    = 'noselect:lastused,full'
 o.wildoptions = 'pum,tagfile,fuzzy'
-
-vim.opt.path:append('**')
