@@ -5,7 +5,8 @@
   "workspace": {
     "library": [
       "$VIMRUNTIME",
-      "$XDG_DATA_HOME/nvim/site/pack/core/opt/nvim-treesitter"
+      "$XDG_DATA_HOME/nvim/site/pack/core/opt/nvim-treesitter",
+      "$XDG_DATA_HOME/nvim/site/pack/core/opt/meanwhile.nvim"
     ]
   }
 }
