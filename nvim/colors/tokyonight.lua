@@ -49,7 +49,9 @@ local palette = {
   purple   = { dark = '#bb9af7', light = '#9854f1' },
 }
 
----@param name (keyof Palette)
+---@generic T extends keyof Palette
+---@param name T
+---@return Palette[T]['dark' | 'light']
 local function color(name)
   return palette[name][mode]
 end
