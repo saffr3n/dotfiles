@@ -146,6 +146,13 @@ local hl = {
 
   StatusLine = { bg = theme.bg.alt, fg = theme.fg.alt },
   StatusLineNC = { bg = theme.bg.alt, fg = theme.ui.nontext },
+  StatusLineInfo = { bg = theme.diff.bg.change, fg = theme.fg.alt }, -- TODO: bg
+  StatusLineModeNormal = { bg = theme.accent.blue, fg = theme.fg.invert, bold = true },
+  StatusLineModeVisual = { bg = theme.accent.magenta, fg = theme.fg.invert, bold = true },
+  StatusLineModeInsert = { bg = theme.accent.green, fg = theme.fg.invert, bold = true },
+  StatusLineModeReplace = { bg = theme.accent.red, fg = theme.fg.invert, bold = true },
+  StatusLineModeCommand = { bg = theme.accent.yellow, fg = theme.fg.invert, bold = true },
+  StatusLineModeOther = { bg = theme.accent.teal, fg = theme.fg.invert, bold = true },
 
   TabLineSel = { bg = theme.accent.blue, fg = theme.fg.invert, bold = true },
 
