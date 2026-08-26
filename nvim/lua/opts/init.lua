@@ -2,6 +2,7 @@ local o = vim.o
 
 require('opts.netrw')
 require('opts.path')
+require('opts.statusline')
 
 o.title      = true
 o.exrc       = true
@@ -16,7 +17,6 @@ o.number         = true
 o.relativenumber = true
 o.signcolumn     = 'yes'
 
-o.laststatus = 3
 o.cmdheight  = 0
 
 o.linebreak   = true
