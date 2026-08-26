@@ -2,6 +2,7 @@ local o = vim.o
 
 o.statusline = '%{%v:lua.saff_statusline()%}'
 o.laststatus = 3
+o.cmdheight  = 0
 o.showmode   = false
 
 vim.g.qf_disable_statusline = 1

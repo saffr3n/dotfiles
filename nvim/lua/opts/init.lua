@@ -17,8 +17,6 @@ o.number         = true
 o.relativenumber = true
 o.signcolumn     = 'yes'
 
-o.cmdheight  = 0
-
 o.linebreak   = true
 o.breakindent = true
 
