@@ -7,18 +7,22 @@ o.showmode   = false
 
 vim.g.qf_disable_statusline = 1
 
+local function replace_keycode(keycode)
+  return vim.api.nvim_replace_termcodes(keycode, true, false, true)
+end
+
 local modes = setmetatable({
-  ['n'] = 'Normal',
-  ['v'] = 'Visual',
-  ['V'] = 'V-Line',
-  [''] = 'V-Block',
-  ['s'] = 'Select',
-  ['S'] = 'S-Line',
-  [''] = 'S-Block',
-  ['i'] = 'Insert',
-  ['R'] = 'Replace',
-  ['c'] = 'Command',
-  ['t'] = 'Terminal',
+  ['n']                      = 'Normal',
+  ['v']                      = 'Visual',
+  ['V']                      = 'V-Line',
+  [replace_keycode('<C-v>')] = 'V-Block',
+  ['s']                      = 'Select',
+  ['S']                      = 'S-Line',
+  [replace_keycode('<C-s>')] = 'S-Block',
+  ['i']                      = 'Insert',
+  ['R']                      = 'Replace',
+  ['c']                      = 'Command',
+  ['t']                      = 'Terminal',
 }, {
   __index = function()
     return 'Unknown'
