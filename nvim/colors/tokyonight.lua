@@ -70,6 +70,7 @@ theme.fg = {
 }
 
 theme.ui = {
+  sl_info = color('neutral4'),
   curline = color('neutral5'),
   folded  = color('neutral6'),
   visual  = color('muted1'),
@@ -146,7 +147,11 @@ local hl = {
 
   StatusLine = { bg = theme.bg.alt, fg = theme.fg.alt },
   StatusLineNC = { bg = theme.bg.alt, fg = theme.ui.nontext },
-  StatusLineInfo = { bg = theme.diff.bg.change, fg = theme.fg.alt }, -- TODO: bg
+  StatusLineInfo = { bg = theme.ui.sl_info, fg = theme.fg.alt },
+  StatusLineDiagnosticError = { bg = theme.ui.sl_info, fg = theme.diag.error },
+  StatusLineDiagnosticWarn = { bg = theme.ui.sl_info, fg = theme.diag.warn },
+  StatusLineDiagnosticInfo = { bg = theme.ui.sl_info, fg = theme.diag.info },
+  StatusLineDiagnosticHint = { bg = theme.ui.sl_info, fg = theme.diag.hint },
   StatusLineModeNormal = { bg = theme.accent.blue, fg = theme.fg.invert, bold = true },
   StatusLineModeVisual = { bg = theme.accent.magenta, fg = theme.fg.invert, bold = true },
   StatusLineModeInsert = { bg = theme.accent.green, fg = theme.fg.invert, bold = true },
