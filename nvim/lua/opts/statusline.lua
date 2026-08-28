@@ -2,6 +2,7 @@ local replace_keycode = require('utils').replace_keycode
 
 local o   = vim.o
 local api = vim.api
+local au  = api.nvim_create_autocmd
 
 o.statusline = '%!v:lua.StatusLine()'
 o.laststatus = 3
@@ -9,6 +10,10 @@ o.cmdheight  = 0
 o.showmode   = false
 
 vim.g.qf_disable_statusline = 1
+
+---@type table<integer, { lsp_count: string }?>
+local state   = {}
+local group   = api.nvim_create_augroup('saff.statusline', { clear = true })
 
 local modes = setmetatable({
   ['n']                      = { text = 'Normal',   hl = '%#StatusLineModeNormal#'  },
@@ -84,3 +89,24 @@ function _G.StatusLine()
 
   return table.concat(parts)
 end
+
+au('BufEnter', {
+  group = group,
+  callback = function(e)
+    local buf = e.buf
+
+    if not api.nvim_is_valid_buf(buf) then
+      state[buf] = nil
+      return
+    end
+
+    state[buf] = state[buf] or {}
+  end,
+})
+
+au('BufWipeout', {
+  group = group,
+  callback = function(e)
+    state[e.buf] = nil
+  end
+})
