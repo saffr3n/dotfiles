@@ -1,8 +1,7 @@
-local replace_keycode = require('utils').replace_keycode
-
-local o   = vim.o
-local api = vim.api
-local au  = api.nvim_create_autocmd
+local o       = vim.o
+local keycode = vim.keycode
+local api     = vim.api
+local au      = api.nvim_create_autocmd
 
 o.statusline = '%!v:lua.StatusLine()'
 o.laststatus = 3
@@ -16,17 +15,17 @@ local state   = {}
 local group   = api.nvim_create_augroup('saff.statusline', { clear = true })
 
 local modes = setmetatable({
-  ['n']                      = { text = 'Normal',   hl = '%#StatusLineModeNormal#'  },
-  ['v']                      = { text = 'Visual',   hl = '%#StatusLineModeVisual#'  },
-  ['V']                      = { text = 'V-Line',   hl = '%#StatusLineModeVisual#'  },
-  [replace_keycode('<C-v>')] = { text = 'V-Block',  hl = '%#StatusLineModeVisual#'  },
-  ['s']                      = { text = 'Select',   hl = '%#StatusLineModeVisual#'  },
-  ['S']                      = { text = 'S-Line',   hl = '%#StatusLineModeVisual#'  },
-  [replace_keycode('<C-s>')] = { text = 'S-Block',  hl = '%#StatusLineModeVisual#'  },
-  ['i']                      = { text = 'Insert',   hl = '%#StatusLineModeInsert#'  },
-  ['R']                      = { text = 'Replace',  hl = '%#StatusLineModeReplace#' },
-  ['c']                      = { text = 'Command',  hl = '%#StatusLineModeCommand#' },
-  ['t']                      = { text = 'Terminal', hl = '%#StatusLineModeOther#'   },
+  ['n']              = { text = 'Normal',   hl = '%#StatusLineModeNormal#'  },
+  ['v']              = { text = 'Visual',   hl = '%#StatusLineModeVisual#'  },
+  ['V']              = { text = 'V-Line',   hl = '%#StatusLineModeVisual#'  },
+  [keycode('<C-v>')] = { text = 'V-Block',  hl = '%#StatusLineModeVisual#'  },
+  ['s']              = { text = 'Select',   hl = '%#StatusLineModeVisual#'  },
+  ['S']              = { text = 'S-Line',   hl = '%#StatusLineModeVisual#'  },
+  [keycode('<C-s>')] = { text = 'S-Block',  hl = '%#StatusLineModeVisual#'  },
+  ['i']              = { text = 'Insert',   hl = '%#StatusLineModeInsert#'  },
+  ['R']              = { text = 'Replace',  hl = '%#StatusLineModeReplace#' },
+  ['c']              = { text = 'Command',  hl = '%#StatusLineModeCommand#' },
+  ['t']              = { text = 'Terminal', hl = '%#StatusLineModeOther#'   },
 }, {
   __index = function(self)
     return { text = 'Unknown', hl = self['t'].hl }
