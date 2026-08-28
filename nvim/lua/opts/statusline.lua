@@ -1,3 +1,5 @@
+local replace_keycode = require('utils').replace_keycode
+
 local o   = vim.o
 local api = vim.api
 
@@ -7,10 +9,6 @@ o.cmdheight  = 0
 o.showmode   = false
 
 vim.g.qf_disable_statusline = 1
-
-local function replace_keycode(keycode)
-  return api.nvim_replace_termcodes(keycode, true, false, true)
-end
 
 local modes = setmetatable({
   ['n']                      = { text = 'Normal',   hl = '%#StatusLineModeNormal#'  },

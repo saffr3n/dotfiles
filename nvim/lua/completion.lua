@@ -1,3 +1,5 @@
+local replace_keycode = require('utils').replace_keycode
+
 local lsp_cmp_au = vim.api.nvim_create_augroup('saff.lsp-cmp', { clear = true })
 local is_lsp_cmp_on = false
 
@@ -11,7 +13,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
       if is_lsp_cmp_on then
         vim.lsp.completion.get()
       else
-        local ctrl_e = vim.api.nvim_replace_termcodes('<C-e>', true, false, true)
+        local ctrl_e = replace_keycode('<C-e>')
         vim.api.nvim_feedkeys(ctrl_e, 'n', false)
       end
     end, { buf = event.buf })
@@ -40,7 +42,7 @@ vim.keymap.set('c', '<C-Space>', function()
   if is_cmd_cmp_on then
     vim.fn.wildtrigger()
   else
-    local ctrl_e = vim.api.nvim_replace_termcodes('<C-e>', true, false, true)
+    local ctrl_e = replace_keycode('<C-e>')
     vim.api.nvim_feedkeys(ctrl_e, 'n', false)
   end
 end)
