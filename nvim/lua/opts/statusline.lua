@@ -1,7 +1,8 @@
-local o       = vim.o
-local keycode = vim.keycode
-local api     = vim.api
-local au      = api.nvim_create_autocmd
+local o            = vim.o
+local keycode      = vim.keycode
+local api          = vim.api
+local au           = api.nvim_create_autocmd
+local is_valid_buf = api.nvim_buf_is_valid
 
 o.statusline = '%!v:lua.StatusLine()'
 o.laststatus = 3
@@ -65,9 +66,9 @@ function _G.StatusLine()
   -- devinfo section
   local devinfo_parts = { info_hl }
 
-  local lsp_count = #vim.lsp.get_clients({ bufnr = buf })
-  if lsp_count > 0 then
-    table.insert(devinfo_parts, ' @' .. lsp_count)
+  local s = state[buf]
+  if s then
+    table.insert(devinfo_parts, s.lsp_count)
   end
 
   local diag = section_diag(buf)
@@ -89,17 +90,35 @@ function _G.StatusLine()
   return table.concat(parts)
 end
 
+---@param buf integer
+local function update_lsp_count(buf)
+  -- lsp client list doesn't get immediately updated on LspDetach, thus schedule
+  vim.schedule(function()
+    if not is_valid_buf(buf) then
+      state[buf] = nil
+      return
+    end
+
+    local s = state[buf]
+    if not s then return end
+
+    local count = #vim.lsp.get_clients({ bufnr = buf })
+    s.lsp_count = count > 0 and (' @' .. count) or ''
+    api.nvim__redraw({ buf = buf, statusline = true })
+  end)
+end
+
 au('BufEnter', {
   group = group,
   callback = function(e)
     local buf = e.buf
 
-    if not api.nvim_is_valid_buf(buf) then
+    if not is_valid_buf(buf) then
       state[buf] = nil
       return
     end
 
-    state[buf] = state[buf] or {}
+    state[buf] = state[buf] or { lsp_count = '' }
   end,
 })
 
@@ -107,5 +126,12 @@ au('BufWipeout', {
   group = group,
   callback = function(e)
     state[e.buf] = nil
+  end
+})
+
+au({ 'LspAttach', 'LspDetach' }, {
+  group = group,
+  callback = function(e)
+    update_lsp_count(e.buf)
   end
 })
