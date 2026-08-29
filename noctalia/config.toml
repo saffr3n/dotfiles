@@ -170,7 +170,7 @@ show_value = false
 [widget.taskbar]
 group_by_workspace = true
 icon_scale = 1.2
-inactive_opacity = 0.8
+inactive_opacity = 0.7
 
 [widget.temp]
 show_value = false
