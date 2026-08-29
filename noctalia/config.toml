@@ -47,6 +47,17 @@ widget_spacing = 4
 [battery]
 warning_threshold = 20
 
+[desktop_widgets]
+schema_version = 2
+widget_order = []
+
+    [desktop_widgets.grid]
+    cell_size = 16
+    major_interval = 4
+    visible = true
+
+    [desktop_widgets.widget]
+
 [hooks]
 started = "hyprctl eval \"require('colorscheme').apply('$(noctalia msg theme-mode-get)')\""
 theme_mode_changed = "hyprctl eval \"require('colorscheme').apply('$(noctalia msg theme-mode-get)')\"; noctalia msg wallpaper-random"
@@ -111,7 +122,6 @@ directory = "/home/saff/Pictures/Screenshots"
 builtin = "Tokyo-Night"
 mode = "auto"
 source = "builtin"
-wallpaper_scheme = "m3-content"
 
     [theme.templates]
     builtin_ids = [ "gtk3", "gtk4", "qt" ]
@@ -136,13 +146,13 @@ show_label = false
 glyph = "adjustments"
 
 [widget.cpu]
-show_label = false
+show_value = false
 
 [widget.input_volume]
 show_label = false
 
 [widget.keyboard_layout]
-show_icon = false
+show_glyph = false
 
 [widget.launcher]
 custom_image = "/home/saff/Pictures/nix-snowflake-colours.svg"
@@ -155,14 +165,14 @@ show_label = false
 show_label = false
 
 [widget.ram]
-show_label = false
+show_value = false
 
 [widget.taskbar]
 group_by_workspace = true
 inactive_opacity = 0.8
 
 [widget.temp]
-show_label = false
+show_value = false
 
 [widget.tray]
 drawer = true
