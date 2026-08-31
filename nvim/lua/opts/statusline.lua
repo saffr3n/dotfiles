@@ -54,8 +54,8 @@ function _G.StatusLine()
 
   local s = state[buf]
   if s then
-    table.insert(devinfo_parts, s.lsp_count)
-    table.insert(devinfo_parts, s.diag_count)
+    if s.lsp_count ~= '' then table.insert(devinfo_parts, s.lsp_count) end
+    if s.diag_count ~= '' then table.insert(devinfo_parts, s.diag_count) end
   end
 
   if #devinfo_parts > 1 then
