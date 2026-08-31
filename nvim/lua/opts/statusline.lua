@@ -1,4 +1,5 @@
 local o            = vim.o
+local bo           = vim.bo
 local keycode      = vim.keycode
 local api          = vim.api
 local au           = api.nvim_create_autocmd
@@ -65,6 +66,20 @@ function _G.StatusLine()
 
   -- fname section
   table.insert(parts, '%* %f%m %=')
+
+  -- finfo section
+  local ftype   = bo.filetype
+  local fencode = bo.fileencoding
+  local fformat = bo.fileformat
+
+  if ftype ~= '' then ftype = ftype .. ' ' end
+
+  table.insert(parts,
+    info_hl .. ' ' ..
+    ftype ..
+    fencode ..
+    '[' .. fformat .. '] %a'
+  )
 
   -- fpos section
   table.insert(parts, mode.hl .. ' %l:%c%V ')
