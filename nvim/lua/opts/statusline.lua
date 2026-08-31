@@ -4,7 +4,7 @@ local api          = vim.api
 local au           = api.nvim_create_autocmd
 local is_valid_buf = api.nvim_buf_is_valid
 
-o.statusline = '%!v:lua.StatusLine()'
+o.statusline = '%{%v:lua.StatusLine()%}'
 o.laststatus = 3
 o.cmdheight  = 0
 o.showmode   = false
@@ -14,6 +14,7 @@ vim.g.qf_disable_statusline = 1
 ---@type table<integer, { lsp_count: string, diag_count: string }?>
 local state   = {}
 local group   = api.nvim_create_augroup('saff.statusline', { clear = true })
+local info_hl = '%#StatusLineInfo#'
 
 local modes = setmetatable({
   ['n']              = { text = 'Normal',   hl = '%#StatusLineModeNormal#'  },
@@ -39,8 +40,6 @@ local diag_lvls = {
   { text = 'I', hl = '%#StatusLineDiagnosticInfo#'  },
   { text = 'H', hl = '%#StatusLineDiagnosticHint#'  },
 }
-
-local info_hl = '%#StatusLineInfo#'
 
 function _G.StatusLine()
   local parts = {}
