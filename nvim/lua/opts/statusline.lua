@@ -5,7 +5,7 @@ local api          = vim.api
 local au           = api.nvim_create_autocmd
 local is_valid_buf = api.nvim_buf_is_valid
 
-o.statusline = '%{%v:lua.StatusLine()%}'
+o.statusline = '%{%v:lua.SaffStatusLine()%}'
 o.laststatus = 3
 o.cmdheight  = 0
 o.showmode   = false
@@ -15,20 +15,20 @@ vim.g.qf_disable_statusline = 1
 ---@type table<integer, { lsp_count: string, diag_count: string }?>
 local state   = {}
 local group   = api.nvim_create_augroup('saff.statusline', { clear = true })
-local info_hl = '%#StatusLineInfo#'
+local info_hl = '%#SaffStatusLineInfo#'
 
 local modes = setmetatable({
-  ['n']              = { text = 'Normal',   hl = '%#StatusLineModeNormal#'  },
-  ['v']              = { text = 'Visual',   hl = '%#StatusLineModeVisual#'  },
-  ['V']              = { text = 'V-Line',   hl = '%#StatusLineModeVisual#'  },
-  [keycode('<C-v>')] = { text = 'V-Block',  hl = '%#StatusLineModeVisual#'  },
-  ['s']              = { text = 'Select',   hl = '%#StatusLineModeVisual#'  },
-  ['S']              = { text = 'S-Line',   hl = '%#StatusLineModeVisual#'  },
-  [keycode('<C-s>')] = { text = 'S-Block',  hl = '%#StatusLineModeVisual#'  },
-  ['i']              = { text = 'Insert',   hl = '%#StatusLineModeInsert#'  },
-  ['R']              = { text = 'Replace',  hl = '%#StatusLineModeReplace#' },
-  ['c']              = { text = 'Command',  hl = '%#StatusLineModeCommand#' },
-  ['t']              = { text = 'Terminal', hl = '%#StatusLineModeOther#'   },
+  ['n']              = { text = 'Normal',   hl = '%#SaffStatusLineModeNormal#'  },
+  ['v']              = { text = 'Visual',   hl = '%#SaffStatusLineModeVisual#'  },
+  ['V']              = { text = 'V-Line',   hl = '%#SaffStatusLineModeVisual#'  },
+  [keycode('<C-v>')] = { text = 'V-Block',  hl = '%#SaffStatusLineModeVisual#'  },
+  ['s']              = { text = 'Select',   hl = '%#SaffStatusLineModeVisual#'  },
+  ['S']              = { text = 'S-Line',   hl = '%#SaffStatusLineModeVisual#'  },
+  [keycode('<C-s>')] = { text = 'S-Block',  hl = '%#SaffStatusLineModeVisual#'  },
+  ['i']              = { text = 'Insert',   hl = '%#SaffStatusLineModeInsert#'  },
+  ['R']              = { text = 'Replace',  hl = '%#SaffStatusLineModeReplace#' },
+  ['c']              = { text = 'Command',  hl = '%#SaffStatusLineModeCommand#' },
+  ['t']              = { text = 'Terminal', hl = '%#SaffStatusLineModeOther#'   },
 }, {
   __index = function(self)
     return { text = 'Unknown', hl = self['t'].hl }
@@ -36,13 +36,13 @@ local modes = setmetatable({
 })
 
 local diag_lvls = {
-  { text = 'E', hl = '%#StatusLineDiagnosticError#' },
-  { text = 'W', hl = '%#StatusLineDiagnosticWarn#'  },
-  { text = 'I', hl = '%#StatusLineDiagnosticInfo#'  },
-  { text = 'H', hl = '%#StatusLineDiagnosticHint#'  },
+  { text = 'E', hl = '%#SaffStatusLineDiagnosticError#' },
+  { text = 'W', hl = '%#SaffStatusLineDiagnosticWarn#'  },
+  { text = 'I', hl = '%#SaffStatusLineDiagnosticInfo#'  },
+  { text = 'H', hl = '%#SaffStatusLineDiagnosticHint#'  },
 }
 
-function _G.StatusLine()
+function _G.SaffStatusLine()
   local parts = {}
   local buf = api.nvim_get_current_buf()
 
