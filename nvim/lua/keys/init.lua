@@ -1,6 +1,8 @@
-local g   = vim.g
-local map = vim.keymap.set
-local cmd = vim.cmd
+local g          = vim.g
+local map        = vim.keymap.set
+local cmd        = vim.cmd
+local api        = vim.api
+local mcursor_ns = api.nvim_create_namespace('nvim.multicursor')
 
 g.mapleader      = ' '
 g.maplocalleader = ' '
@@ -8,7 +10,10 @@ g.maplocalleader = ' '
 require('keys.emacs')
 
 map('c', '<C-;>', '<C-f>') -- <C-f> is taken by emacs mappings
-map('n', '<Esc>', cmd.nohlsearch)
+map('n', '<Esc>', function()
+  cmd.nohlsearch()
+  api.nvim_buf_clear_namespace(0, mcursor_ns, 0, -1)
+end)
 
 map('n', 'j', 'gj')
 map('n', 'k', 'gk')
