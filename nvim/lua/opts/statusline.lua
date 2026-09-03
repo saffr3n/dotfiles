@@ -87,13 +87,16 @@ function _G.SaffStatusLine()
   return table.concat(parts)
 end
 
+local function clear_buf(buf)
+  state[buf] = nil
+end
+
 ---@param buf integer
 local function update_lsp_count(buf)
   -- lsp client list doesn't get immediately updated on LspDetach, thus schedule
   vim.schedule(function()
     if not is_valid_buf(buf) then
-      state[buf] = nil
-      return
+      return clear_buf(buf)
     end
 
     local s = state[buf]
@@ -130,8 +133,7 @@ au('BufEnter', {
     local buf = e.buf
 
     if not is_valid_buf(buf) then
-      state[buf] = nil
-      return
+      return clear_buf(buf)
     end
 
     state[buf] = state[buf] or {
@@ -144,7 +146,7 @@ au('BufEnter', {
 au('BufWipeout', {
   group = group,
   callback = function(e)
-    state[e.buf] = nil
+    clear_buf(e.buf)
   end
 })
 
