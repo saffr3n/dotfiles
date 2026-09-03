@@ -12,7 +12,11 @@ o.showmode   = false
 
 vim.g.qf_disable_statusline = 1
 
----@type table<integer, { lsp_count: string, diag_count: string }?>
+---@type table<integer, {
+---  lsp_count  : string,
+---  diag_count : string,
+---  fsize      : string,
+---}?>
 local state   = {}
 local group   = api.nvim_create_augroup('saff.statusline', { clear = true })
 local info_hl = '%#SaffStatusLineInfo#'
@@ -44,7 +48,18 @@ local diag_lvls = {
 
 function _G.SaffStatusLine()
   local parts = {}
-  local buf = api.nvim_get_current_buf()
+  local buf   = api.nvim_get_current_buf()
+  local s     = state[buf]
+
+  local lsp_count
+  local diag_count
+  local fsize
+
+  if s then
+    lsp_count  = s.lsp_count
+    diag_count = s.diag_count
+    fsize      = s.fsize
+  end
 
   -- mode section
   local mode = modes[vim.fn.mode()]
@@ -53,11 +68,8 @@ function _G.SaffStatusLine()
   -- devinfo section
   local devinfo_parts = { info_hl }
 
-  local s = state[buf]
-  if s then
-    if s.lsp_count ~= '' then table.insert(devinfo_parts, s.lsp_count) end
-    if s.diag_count ~= '' then table.insert(devinfo_parts, s.diag_count) end
-  end
+  if lsp_count  then table.insert(devinfo_parts, lsp_count)  end
+  if diag_count then table.insert(devinfo_parts, diag_count) end
 
   if #devinfo_parts > 1 then
     table.insert(devinfo_parts, ' ')
@@ -68,18 +80,17 @@ function _G.SaffStatusLine()
   table.insert(parts, '%* %f%m %=')
 
   -- finfo section
+  local finfo_parts = { info_hl }
+
   local ftype   = bo.filetype
   local fencode = bo.fileencoding
   local fformat = bo.fileformat
 
-  if ftype ~= '' then ftype = ftype .. ' ' end
+  if ftype ~= '' then table.insert(finfo_parts, ' ' .. ftype) end
+  table.insert(finfo_parts, ' ' .. fencode .. '[' .. fformat .. '] ')
+  if fsize then table.insert(finfo_parts, fsize .. ' ') end
 
-  table.insert(parts,
-    info_hl .. ' ' ..
-    ftype ..
-    fencode ..
-    '[' .. fformat .. '] %a'
-  )
+  table.insert(parts, table.concat(finfo_parts))
 
   -- fpos section
   table.insert(parts, mode.hl .. ' %l:%c%V ')
@@ -127,6 +138,30 @@ local function update_diag_count(buf)
   api.nvim__redraw({ buf = buf, statusline = true })
 end
 
+---@param buf integer
+local function update_fsize(buf)
+  local s = state[buf]
+  if not s then return end
+
+  local lines = api.nvim_buf_line_count(buf)
+  local bytes = api.nvim_buf_get_offset(buf, lines)
+
+  local KB = 1024
+  local MB = KB ^ 2
+
+  if bytes < KB then
+    s.fsize = bytes .. 'B'
+  elseif bytes < MB then
+    local kbytes = math.floor(bytes * 100 / KB) / 100
+    s.fsize      = kbytes .. 'KB'
+  else
+    local mbytes = math.floor(bytes * 100 / MB) / 100
+    s.fsize      = mbytes .. 'MB'
+  end
+
+  api.nvim__redraw({ buf = buf, statusline = true })
+end
+
 au('BufEnter', {
   group = group,
   callback = function(e)
@@ -139,7 +174,16 @@ au('BufEnter', {
     state[buf] = state[buf] or {
       lsp_count  = '',
       diag_count = '',
+      fsize      = '',
     }
+
+    api.nvim_buf_attach(buf, false, {
+      on_lines  = function() update_fsize(buf) end,
+      on_reload = function() update_fsize(buf) end,
+      on_detach = function() clear_buf(buf)    end,
+    })
+
+    update_fsize(buf)
   end,
 })
 
