@@ -51,9 +51,9 @@ function _G.SaffStatusLine()
   local buf   = api.nvim_get_current_buf()
   local s     = state[buf]
 
-  local lsp_count
-  local diag_count
-  local fsize
+  local lsp_count  = ''
+  local diag_count = ''
+  local fsize      = ''
 
   if s then
     lsp_count  = s.lsp_count
@@ -68,8 +68,8 @@ function _G.SaffStatusLine()
   -- devinfo section
   local devinfo_parts = { info_hl }
 
-  if lsp_count  then table.insert(devinfo_parts, lsp_count)  end
-  if diag_count then table.insert(devinfo_parts, diag_count) end
+  if lsp_count  ~= '' then table.insert(devinfo_parts, lsp_count)  end
+  if diag_count ~= '' then table.insert(devinfo_parts, diag_count) end
 
   if #devinfo_parts > 1 then
     table.insert(devinfo_parts, ' ')
@@ -88,7 +88,7 @@ function _G.SaffStatusLine()
 
   if ftype ~= '' then table.insert(finfo_parts, ' ' .. ftype) end
   table.insert(finfo_parts, ' ' .. fencode .. '[' .. fformat .. '] ')
-  if fsize then table.insert(finfo_parts, fsize .. ' ') end
+  if fsize ~= '' then table.insert(finfo_parts, fsize .. ' ') end
 
   table.insert(parts, table.concat(finfo_parts))
 
@@ -98,8 +98,12 @@ function _G.SaffStatusLine()
   return table.concat(parts)
 end
 
-local function clear_buf(buf)
+local function clear(buf)
   state[buf] = nil
+end
+
+local function redraw(buf)
+  api.nvim__redraw({ buf = buf, statusline = true })
 end
 
 ---@param buf integer
@@ -107,7 +111,7 @@ local function update_lsp_count(buf)
   -- lsp client list doesn't get immediately updated on LspDetach, thus schedule
   vim.schedule(function()
     if not is_valid_buf(buf) then
-      return clear_buf(buf)
+      return clear(buf)
     end
 
     local s = state[buf]
@@ -115,7 +119,7 @@ local function update_lsp_count(buf)
 
     local count = #vim.lsp.get_clients({ bufnr = buf })
     s.lsp_count = count > 0 and (' @' .. count) or ''
-    api.nvim__redraw({ buf = buf, statusline = true })
+    redraw(buf)
   end)
 end
 
@@ -135,7 +139,7 @@ local function update_diag_count(buf)
   end
 
   s.diag_count = table.concat(parts)
-  api.nvim__redraw({ buf = buf, statusline = true })
+  redraw(buf)
 end
 
 ---@param buf integer
@@ -159,16 +163,16 @@ local function update_fsize(buf)
     s.fsize      = mbytes .. 'MB'
   end
 
-  api.nvim__redraw({ buf = buf, statusline = true })
+  redraw(buf)
 end
 
 au('BufEnter', {
-  group = group,
+  group    = group,
   callback = function(e)
     local buf = e.buf
 
     if not is_valid_buf(buf) then
-      return clear_buf(buf)
+      return clear(buf)
     end
 
     state[buf] = state[buf] or {
@@ -180,7 +184,7 @@ au('BufEnter', {
     api.nvim_buf_attach(buf, false, {
       on_lines  = function() update_fsize(buf) end,
       on_reload = function() update_fsize(buf) end,
-      on_detach = function() clear_buf(buf)    end,
+      on_detach = function() clear(buf)    end,
     })
 
     update_fsize(buf)
@@ -188,21 +192,21 @@ au('BufEnter', {
 })
 
 au('BufWipeout', {
-  group = group,
+  group    = group,
   callback = function(e)
-    clear_buf(e.buf)
+    clear(e.buf)
   end
 })
 
 au({ 'LspAttach', 'LspDetach' }, {
-  group = group,
+  group    = group,
   callback = function(e)
     update_lsp_count(e.buf)
   end
 })
 
 au('DiagnosticChanged', {
-  group = group,
+  group    = group,
   callback = function(e)
     update_diag_count(e.buf)
   end,
