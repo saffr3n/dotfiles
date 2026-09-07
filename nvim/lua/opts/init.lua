@@ -3,6 +3,7 @@ local o = vim.o
 require('opts.netrw')
 require('opts.path')
 require('opts.statusline')
+require('opts.statuscolumn')
 
 o.title      = true
 o.exrc       = true
@@ -12,14 +13,6 @@ o.undofile   = true
 o.backupcopy = 'yes'
 o.clipboard  = 'unnamedplus'
 o.scrolloff  = 8
-
-o.number         = true
-o.relativenumber = true
-o.signcolumn     = 'yes'
-o.foldcolumn     = '1'
-o.foldmethod     = 'indent'
-o.foldtext       = ''
-o.foldlevel      = 99
 
 o.linebreak   = true
 o.breakindent = true
