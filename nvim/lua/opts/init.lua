@@ -25,7 +25,6 @@ o.pumborder = 'rounded'
 
 o.list      = true
 o.listchars = 'tab:> ,trail:·,nbsp:+'
-o.fillchars = 'eob: '
 
 o.shiftwidth  = 2
 o.softtabstop = -1
