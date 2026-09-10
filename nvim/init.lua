@@ -7,6 +7,7 @@ vim.pack.add({ 'https://github.com/saffr3n/meanwhile.nvim' })
 
 require('opts')
 require('keys')
+require('indent')
 require('treesitter')
 require('completion')
 
