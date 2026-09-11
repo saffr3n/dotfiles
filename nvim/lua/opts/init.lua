@@ -2,6 +2,7 @@ local o = vim.o
 
 require('opts.netrw')
 require('opts.path')
+require('opts.tabline')
 require('opts.statusline')
 require('opts.statuscolumn')
 

@@ -43,30 +43,3 @@ vim.api.nvim_create_autocmd('LspAttach', {
     end, { buf = event.buf })
   end,
 })
-
-function _G.TabLine()
-  local s = ''
-  for _, tab in ipairs(vim.api.nvim_list_tabpages()) do
-    local hl, cross = '', ''
-    if tab == vim.api.nvim_get_current_tabpage() then
-      hl = '%#TabLineSel#'
-      cross = '%999Xx'
-    else
-      hl = '%#TabLine#'
-    end
-
-    local n = vim.api.nvim_tabpage_get_number(tab)
-    local win = vim.api.nvim_tabpage_get_win(tab)
-    local buf = vim.api.nvim_win_get_buf(win)
-
-    local name_full = vim.api.nvim_buf_get_name(buf)
-    if name_full == '' then name_full = '[No Name]' end
-    local name_short = vim.fn.fnamemodify(name_full, ':t')
-    local name = name_short == '' and name_full or name_short
-
-    s = s .. hl .. '%' .. n .. 'T' .. ' ' .. name .. ' ' .. cross .. ' '
-  end
-  s = s .. '%#TabLineFill#%T'
-  return s
-end
-vim.o.tabline = '%{%v:lua.TabLine()%}'
