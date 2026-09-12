@@ -8,7 +8,7 @@ o.foldcolumn     = '1'
 o.foldtext       = ''
 o.foldmethod     = 'indent'
 o.foldlevel      = 99
-o.fillchars      = 'fold: ,foldsep: ,foldinner: ,foldopen:v,foldclose:>,eob: '
+o.fillchars      = 'fold: ,foldsep: ,foldinner: ,eob: '
 
 function _G.SaffStatusColumn()
   return '%l%s%C'
