@@ -27,8 +27,9 @@ end
 au('BufWinEnter', {
   group    = group,
   callback = function(e)
-    local buf = e.buf
-    local lang = ts.language.get_lang(bo[buf].filetype)
+    local buf  = e.buf
+    local lang = ts.language.get_lang(bo.filetype)
+
     if not lang or not ts.language.add(lang) then
       return set_default_foldmethod()
     end
@@ -59,7 +60,10 @@ au('PackChanged', {
     local kind = data.kind
     if kind ~= 'install' and kind ~= 'update' then return end
 
-    if not data.active then cmd.packadd(plugin) end
+    if not data.active then
+      cmd.packadd(plugin)
+    end
+
     cmd('TSUpdate')
   end,
 })

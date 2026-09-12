@@ -1,22 +1,30 @@
-local meanwhile = require('meanwhile')
-local promisify = meanwhile.promisify
+local meanwhile    = require('meanwhile')
+local promisify    = meanwhile.promisify
 local async, await = meanwhile.async, meanwhile.await
+
+local o   = vim.o
+local uv  = vim.uv
+local api = vim.api
 
 local TIMEOUT = 300
 local EXCLUDE = {
   ['.git']     = true,
 }
 
-local gen = 0
-local default = vim.o.path
+local gen     = 0
+local default = o.path
 
 ---@param path string
----@param cb fun(err?: string, dir?: uv.luv_dir_t)
-local opendir = promisify(function(path, cb) vim.uv.fs_opendir(path, cb) end)
+---@param cb   fun(err?: string, dir?: uv.luv_dir_t)
+local opendir = promisify(function(path, cb)
+  uv.fs_opendir(path, cb)
+end)
 
 ---@param dir uv.luv_dir_t
----@param cb fun(err?: string, entries?: table<integer, { name: string, type: string }>)
-local readdir = promisify(function(dir, cb) vim.uv.fs_readdir(dir, cb) end)
+---@param cb  fun(err?: string, entries?: table<integer, { name: string, type: string }>)
+local readdir = promisify(function(dir, cb)
+  uv.fs_readdir(dir, cb)
+end)
 
 ---@param dirs uv.luv_dir_t[]
 local function clean(dirs)
@@ -35,13 +43,13 @@ end
 
 ---@param deadline number
 local function should_cancel(deadline)
-  return vim.uv.hrtime() > deadline
+  return uv.hrtime() > deadline
 end
 
-vim.api.nvim_create_autocmd({ 'VimEnter', 'DirChanged' }, {
-  group = vim.api.nvim_create_augroup('saff.path', { clear = true }),
+api.nvim_create_autocmd({ 'VimEnter', 'DirChanged' }, {
+  group    = api.nvim_create_augroup('saff.path', { clear = true }),
   callback = async(function()
-    local cwd = vim.uv.cwd()
+    local cwd = uv.cwd()
     if not cwd then return end
 
     gen            = gen + 1
@@ -49,7 +57,7 @@ vim.api.nvim_create_autocmd({ 'VimEnter', 'DirChanged' }, {
     local queue    = { cwd }
     local dirs     = {}
     local res      = {}
-    local deadline = vim.uv.hrtime() + TIMEOUT * 1e6
+    local deadline = uv.hrtime() + TIMEOUT * 1e6
 
     while #queue > 0 do
       local dirname = table.remove(queue)
@@ -57,11 +65,15 @@ vim.api.nvim_create_autocmd({ 'VimEnter', 'DirChanged' }, {
 
       if dir then
         table.insert(dirs, dir)
-        if should_cancel(deadline) then return cancel(dirs) end
+        if should_cancel(deadline) then
+          return cancel(dirs)
+        end
 
         while true do
           local entries = await(readdir(dir))
-          if should_cancel(deadline) then return cancel(dirs) end
+          if should_cancel(deadline) then
+            return cancel(dirs)
+          end
           if not entries then break end
 
           for _, entry in ipairs(entries) do
@@ -77,6 +89,6 @@ vim.api.nvim_create_autocmd({ 'VimEnter', 'DirChanged' }, {
 
     clean(dirs)
     if this_gen ~= gen then return end
-    vim.o.path = default .. table.concat(res, ',')
+    o.path = default .. table.concat(res, ',')
   end),
 })

@@ -68,8 +68,12 @@ function _G.SaffStatusLine()
   -- devinfo section
   local devinfo_parts = { info_hl }
 
-  if lsp_count  ~= '' then table.insert(devinfo_parts, lsp_count)  end
-  if diag_count ~= '' then table.insert(devinfo_parts, diag_count) end
+  if lsp_count  ~= '' then
+    table.insert(devinfo_parts, lsp_count)
+  end
+  if diag_count ~= '' then
+    table.insert(devinfo_parts, diag_count)
+  end
 
   if #devinfo_parts > 1 then
     table.insert(devinfo_parts, ' ')
@@ -86,9 +90,15 @@ function _G.SaffStatusLine()
   local fencode = bo.fileencoding
   local fformat = bo.fileformat
 
-  if ftype ~= '' then table.insert(finfo_parts, ' ' .. ftype) end
+  if ftype ~= '' then
+    table.insert(finfo_parts, ' ' .. ftype)
+  end
+
   table.insert(finfo_parts, ' ' .. fencode .. '[' .. fformat .. '] ')
-  if fsize ~= '' then table.insert(finfo_parts, fsize .. ' ') end
+
+  if fsize ~= '' then
+    table.insert(finfo_parts, fsize .. ' ')
+  end
 
   table.insert(parts, table.concat(finfo_parts))
 
@@ -184,7 +194,7 @@ au('BufEnter', {
     api.nvim_buf_attach(buf, false, {
       on_lines  = function() update_fsize(buf) end,
       on_reload = function() update_fsize(buf) end,
-      on_detach = function() clear(buf)    end,
+      on_detach = function() clear(buf)        end,
     })
 
     update_fsize(buf)
