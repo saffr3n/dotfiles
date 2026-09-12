@@ -9,6 +9,7 @@ local api = vim.api
 local TIMEOUT = 300
 local EXCLUDE = {
   ['.git']     = true,
+  node_modules = true,
 }
 
 local gen     = 0
