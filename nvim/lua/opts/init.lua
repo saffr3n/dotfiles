@@ -25,7 +25,7 @@ o.winborder = 'rounded'
 o.pumborder = 'rounded'
 
 o.list      = true
-o.listchars = 'tab:> ,trail:·,nbsp:+'
+o.listchars = 'tab:> ,trail:-,nbsp:+'
 
 o.shiftwidth  = 2
 o.softtabstop = -1
