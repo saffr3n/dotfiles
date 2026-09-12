@@ -1,5 +1,11 @@
+local o = vim.o
+
 local lsp_cmp_au = vim.api.nvim_create_augroup('saff.lsp-cmp', { clear = true })
 local is_lsp_cmp_on = false
+
+o.completeopt = 'menuone,noselect,fuzzy,popup'
+o.wildmode    = 'noselect:lastused,full'
+o.wildoptions = 'pum,tagfile,fuzzy'
 
 vim.api.nvim_create_autocmd('LspAttach', {
   group = lsp_cmp_au,

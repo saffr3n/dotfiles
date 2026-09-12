@@ -34,7 +34,3 @@ o.expandtab   = true
 o.ignorecase = true
 o.smartcase  = true
 o.inccommand = 'split'
-
-o.completeopt = 'menuone,noselect,fuzzy,popup'
-o.wildmode    = 'noselect:lastused,full'
-o.wildoptions = 'pum,tagfile,fuzzy'
