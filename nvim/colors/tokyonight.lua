@@ -1,5 +1,5 @@
 vim.cmd.highlight('clear')
-if vim.fn.exists('syntax_on') then
+if vim.fn.exists('syntax_on') ~= 0 then
   vim.cmd.syntax('reset')
 end
 
