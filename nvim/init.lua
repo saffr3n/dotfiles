@@ -10,8 +10,8 @@ require('keys')
 require('indent')
 require('treesitter')
 require('completion')
+require('diagnostic')
 
-vim.diagnostic.config({ severity_sort = true, virtual_text = true })
 
 
 ---@type [integer, integer]?

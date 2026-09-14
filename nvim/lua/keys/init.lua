@@ -25,9 +25,6 @@ map('x', '<', '<gv')
 map('n', '<Leader>e', ':20Lex<CR>')
 map('n', '<Leader>u', cmd.Undotree)
 
-map('n', '<Leader>q', vim.diagnostic.setqflist)
-map('n', '<Leader>l', vim.diagnostic.setloclist)
-
 map('n', '<M-j>', ':move +1<CR>==')
 map('n', '<M-k>', ':move -2<CR>==')
 map('x', '<M-j>', ":move '>+1<CR>gv=gv")
