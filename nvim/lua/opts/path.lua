@@ -37,6 +37,7 @@ end
 ---@param dirs uv.luv_dir_t[]
 local function cancel(dirs)
   clean(dirs)
+
   vim.schedule(function()
     vim.notify("'path' generation timed out, using default", vim.log.levels.WARN)
   end)

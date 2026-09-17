@@ -1,5 +1,5 @@
 return {
-  cmd = { 'jdtls' },
-  filetypes = { 'java' },
+  cmd          = { 'jdtls' },
+  filetypes    = { 'java' },
   root_markers = { '.git' },
 }

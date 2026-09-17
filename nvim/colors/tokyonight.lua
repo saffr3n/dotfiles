@@ -1,6 +1,8 @@
-vim.cmd.highlight('clear')
+local cmd = vim.cmd
+
+cmd.highlight('clear')
 if vim.fn.exists('syntax_on') ~= 0 then
-  vim.cmd.syntax('reset')
+  cmd.syntax('reset')
 end
 
 vim.g.colors_name = 'tokyonight'
@@ -50,8 +52,8 @@ local palette = {
 }
 
 ---@generic T extends keyof Palette
----@param name T
----@return Palette[T]['dark' | 'light']
+---@param   name T
+---@return  Palette[T]['dark' | 'light']
 local function color(name)
   return palette[name][mode]
 end

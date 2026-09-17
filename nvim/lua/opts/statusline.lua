@@ -2,7 +2,6 @@ local o            = vim.o
 local bo           = vim.bo
 local keycode      = vim.keycode
 local api          = vim.api
-local au           = api.nvim_create_autocmd
 local is_valid_buf = api.nvim_buf_is_valid
 
 o.statusline = '%{%v:lua.SaffStatusLine()%}'
@@ -18,8 +17,8 @@ vim.g.qf_disable_statusline = 1
 ---  fsize      : string,
 ---}?>
 local state   = {}
-local group   = api.nvim_create_augroup('saff.statusline', { clear = true })
 local info_hl = '%#SaffStatusLineInfo#'
+local group   = api.nvim_create_augroup('saff.statusline', { clear = true })
 
 local modes = setmetatable({
   ['n']              = { text = 'Normal',   hl = '%#SaffStatusLineModeNormal#'  },
@@ -108,10 +107,12 @@ function _G.SaffStatusLine()
   return table.concat(parts)
 end
 
+---@param buf integer
 local function clear(buf)
   state[buf] = nil
 end
 
+---@param buf integer
 local function redraw(buf)
   api.nvim__redraw({ buf = buf, statusline = true })
 end
@@ -176,48 +177,42 @@ local function update_fsize(buf)
   redraw(buf)
 end
 
-au('BufEnter', {
-  group    = group,
-  callback = function(e)
-    local buf = e.buf
+---@param event vim.api.keyset.events | vim.api.keyset.events[]
+---@param cb    fun(args: vim.api.keyset.create_autocmd.callback_args): boolean?
+local function aucmd(event, cb)
+  api.nvim_create_autocmd(event, { group = group, callback = cb })
+end
 
-    if not is_valid_buf(buf) then
-      return clear(buf)
-    end
+aucmd('BufEnter', function(e)
+  local buf = e.buf
 
-    state[buf] = state[buf] or {
-      lsp_count  = '',
-      diag_count = '',
-      fsize      = '',
-    }
-
-    api.nvim_buf_attach(buf, false, {
-      on_lines  = function() update_fsize(buf) end,
-      on_reload = function() update_fsize(buf) end,
-      on_detach = function() clear(buf)        end,
-    })
-
-    update_fsize(buf)
-  end,
-})
-
-au('BufWipeout', {
-  group    = group,
-  callback = function(e)
-    clear(e.buf)
+  if not is_valid_buf(buf) then
+    return clear(buf)
   end
-})
 
-au({ 'LspAttach', 'LspDetach' }, {
-  group    = group,
-  callback = function(e)
-    update_lsp_count(e.buf)
-  end
-})
+  state[buf] = state[buf] or {
+    lsp_count  = '',
+    diag_count = '',
+    fsize      = '',
+  }
 
-au('DiagnosticChanged', {
-  group    = group,
-  callback = function(e)
-    update_diag_count(e.buf)
-  end,
-})
+  api.nvim_buf_attach(buf, false, {
+    on_lines  = function() update_fsize(buf) end,
+    on_reload = function() update_fsize(buf) end,
+    on_detach = function() clear(buf)        end,
+  })
+
+  update_fsize(buf)
+end)
+
+aucmd('BufWipeout', function(e)
+  clear(e.buf)
+end)
+
+aucmd({ 'LspAttach', 'LspDetach' }, function(e)
+  update_lsp_count(e.buf)
+end)
+
+aucmd('DiagnosticChanged', function(e)
+  update_diag_count(e.buf)
+end)

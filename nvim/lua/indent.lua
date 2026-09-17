@@ -1,7 +1,6 @@
 local b   = vim.b
 local fn  = vim.fn
 local api = vim.api
-local au  = api.nvim_create_autocmd
 
 ---@type table<integer, {
 ---  unit      : string,
@@ -82,19 +81,19 @@ local function render(win, buf, top, bot)
   end)
 end
 
-au('BufWinEnter', {
-  group    = group,
-  callback = function(e)
-    init(e.buf)
-  end,
-})
+---@param event vim.api.keyset.events
+---@param cb    fun(args: vim.api.keyset.create_autocmd.callback_args): boolean?
+local function aucmd(event, cb)
+  api.nvim_create_autocmd(event, { group = group, callback = cb })
+end
 
-au('BufWipeout', {
-  group    = group,
-  callback = function(e)
-    clear(e.buf)
-  end,
-})
+aucmd('BufWinEnter', function(e)
+  init(e.buf)
+end)
+
+aucmd('BufWipeout', function(e)
+  clear(e.buf)
+end)
 
 api.nvim_set_decoration_provider(ns, {
   on_win = function(_, win, buf, top, bot)
