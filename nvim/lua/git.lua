@@ -4,7 +4,9 @@ local meanwhile    = require('meanwhile')
 local promisify    = meanwhile.promisify
 local async, await = meanwhile.async, meanwhile.await
 
-local api = vim.api
+local g    = vim.g
+local trim = vim.trim
+local api  = vim.api
 
 ---@type { cwd?: string }
 local state = {}
@@ -23,18 +25,37 @@ local syscall = promisify(function(cmd, cb)
   end)
 end)
 
+---@param msg string
+local function error(msg)
+  vim.notify(msg, vim.log.levels.ERROR)
+end
+
 local update_dir = async(function()
   local dir, err = await(syscall({ 'git', 'rev-parse', '--git-dir' }))
   if err then
-    return vim.notify(err, vim.log.levels.ERROR)
+    return error(err)
   end
 
-  dir = vim.trim(dir--[[@cast -?]])
+  dir = trim(dir--[[@cast -?]])
   if dir == '' then
     dir = nil
   end
 
-  vim.g.git_dir = dir
+  g.git_dir = dir
+end)
+
+local update_root = async(function()
+  local root, err = await(syscall({ 'git', 'rev-parse', '--show-toplevel' }))
+  if err then
+    return error(err)
+  end
+
+  root = trim(root--[[@cast -?]])
+  if root == '' then
+    root = nil
+  end
+
+  g.git_root = root
 end)
 
 api.nvim_create_autocmd({ 'VimEnter', 'DirChanged' }, {
@@ -46,6 +67,8 @@ api.nvim_create_autocmd({ 'VimEnter', 'DirChanged' }, {
     if cwd ~= state.cwd then
       state.cwd = cwd
       await(update_dir())
+      if not vim.g.git_dir then return end
+      update_root(state_gen)
     end
   end),
 })
