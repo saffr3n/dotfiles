@@ -58,6 +58,20 @@ local update_root = async(function()
   g.git_root = root
 end)
 
+local update_head = async(function()
+  local head, err = await(syscall({ 'git', 'rev-parse', 'HEAD' }))
+  if err then
+    return error(err)
+  end
+
+  head = trim(head--[[@cast -?]])
+  if head == '' then
+    head = nil
+  end
+
+  g.git_head = head
+end)
+
 api.nvim_create_autocmd({ 'VimEnter', 'DirChanged' }, {
   group    = api.nvim_create_augroup('saff.git', { clear = true }),
   callback = async(function()
@@ -70,5 +84,7 @@ api.nvim_create_autocmd({ 'VimEnter', 'DirChanged' }, {
       if not vim.g.git_dir then return end
       update_root(state_gen)
     end
+
+    update_head(state_gen)
   end),
 })
