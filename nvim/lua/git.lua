@@ -72,6 +72,20 @@ local update_head = async(function()
   g.git_head = head
 end)
 
+local update_index = async(function()
+  local index, err = await(syscall({ 'git', 'write-tree' }))
+  if err then
+    return error(err)
+  end
+
+  index = trim(index--[[@cast -?]])
+  if index == '' then
+    index = nil
+  end
+
+  g.git_index = index
+end)
+
 api.nvim_create_autocmd({ 'VimEnter', 'DirChanged' }, {
   group    = api.nvim_create_augroup('saff.git', { clear = true }),
   callback = async(function()
@@ -86,5 +100,6 @@ api.nvim_create_autocmd({ 'VimEnter', 'DirChanged' }, {
     end
 
     update_head(state_gen)
+    update_index(state_gen)
   end),
 })
