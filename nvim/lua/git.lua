@@ -58,6 +58,23 @@ local update_root = async(function()
   g.git_root = root
 end)
 
+local update_branch = async(function()
+  local branch, err = await(syscall({ 'git', 'symbolic-ref', '--short', 'HEAD' }))
+  if err then
+    branch, err = await(syscall({ 'git', 'rev-parse', '--short', 'HEAD' }))
+    if err then
+      return error(err)
+    end
+  end
+
+  branch = trim(branch--[[@cast -?]])
+  if branch == '' then
+    branch = nil
+  end
+
+  g.git_branch = branch
+end)
+
 local update_head = async(function()
   local head, err = await(syscall({ 'git', 'rev-parse', 'HEAD' }))
   if err then
@@ -70,6 +87,7 @@ local update_head = async(function()
   end
 
   g.git_head = head
+  update_branch(gen)
 end)
 
 local update_index = async(function()
