@@ -4,9 +4,10 @@ local meanwhile    = require('meanwhile')
 local promisify    = meanwhile.promisify
 local async, await = meanwhile.async, meanwhile.await
 
-local g    = vim.g
-local trim = vim.trim
-local api  = vim.api
+local g        = vim.g
+local schedule = vim.schedule
+local trim     = vim.trim
+local api      = vim.api
 
 ---@type { cwd?: string }
 local state = {}
@@ -30,6 +31,19 @@ local function error(msg)
   vim.notify(msg, vim.log.levels.ERROR)
 end
 
+---@param event
+---| 'SaffGitDirChanged'
+---| 'SaffGitRootChanged'
+---| 'SaffGitBranchChanged'
+---| 'SaffGitHeadChanged'
+---| 'SaffGitIndexChanged'
+---@param data { old?: string, new?: string }
+local function notify(event, data)
+  schedule(function()
+    api.nvim_exec_autocmds('User', { pattern = event, data = data })
+  end)
+end
+
 local update_dir = async(function()
   local dir, err = await(syscall({ 'git', 'rev-parse', '--git-dir' }))
   if err then
@@ -41,7 +55,12 @@ local update_dir = async(function()
     dir = nil
   end
 
-  g.git_dir = dir
+  if dir ~= state.dir then
+    notify('SaffGitDirChanged', { old = state.dir, new = dir })
+    g.git_dir = dir
+  end
+
+  return dir
 end)
 
 local update_root = async(function()
@@ -55,7 +74,12 @@ local update_root = async(function()
     root = nil
   end
 
-  g.git_root = root
+  if root ~= state.root then
+    notify('SaffGitRootChanged', { old = state.root, new = root })
+    g.git_root = root
+  end
+
+  return root
 end)
 
 local update_branch = async(function()
@@ -72,7 +96,12 @@ local update_branch = async(function()
     branch = nil
   end
 
-  g.git_branch = branch
+  if branch ~= state.branch then
+    notify('SaffGitBranchChanged', { old = state.branch, new = branch })
+    g.git_branch = branch
+  end
+
+  return branch
 end)
 
 local update_head = async(function()
@@ -86,8 +115,13 @@ local update_head = async(function()
     head = nil
   end
 
-  g.git_head = head
-  update_branch(gen)
+  if head ~= state.head then
+    update_branch(gen)
+    notify('SaffGitHeadChanged', { old = state.head, new = head })
+    g.git_head = head
+  end
+
+  return head
 end)
 
 local update_index = async(function()
@@ -101,7 +135,12 @@ local update_index = async(function()
     index = nil
   end
 
-  g.git_index = index
+  if index ~= state.index then
+    notify('SaffGitIndexChanged', { old = state.index, new = index })
+    g.git_index = index
+  end
+
+  return index
 end)
 
 api.nvim_create_autocmd({ 'VimEnter', 'DirChanged' }, {
@@ -112,8 +151,7 @@ api.nvim_create_autocmd({ 'VimEnter', 'DirChanged' }, {
 
     if cwd ~= state.cwd then
       state.cwd = cwd
-      await(update_dir())
-      if not vim.g.git_dir then return end
+      if not await(update_dir()) then return end
       update_root(state_gen)
     end
 
