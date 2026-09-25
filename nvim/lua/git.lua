@@ -4,13 +4,19 @@ local meanwhile    = require('meanwhile')
 local promisify    = meanwhile.promisify
 local async, await = meanwhile.async, meanwhile.await
 
-local g        = vim.g
 local schedule = vim.schedule
 local trim     = vim.trim
 local api      = vim.api
 
----@type { cwd?: string }
-local state = {}
+---@type {
+---  cwd    : string?,
+---  dir    : string?,
+---  root   : string?,
+---  branch : string?,
+---  head   : string?,
+---  index  : string?,
+---}
+local state     = {}
 
 ---@param cmd string[]
 ---@param cb  fun(err?: string, out?: string)
@@ -57,7 +63,7 @@ local update_dir = async(function()
 
   if dir ~= state.dir then
     notify('SaffGitDirChanged', { old = state.dir, new = dir })
-    g.git_dir = dir
+    state.dir = dir
   end
 
   return dir
@@ -76,7 +82,7 @@ local update_root = async(function()
 
   if root ~= state.root then
     notify('SaffGitRootChanged', { old = state.root, new = root })
-    g.git_root = root
+    state.root = root
   end
 
   return root
@@ -98,7 +104,7 @@ local update_branch = async(function()
 
   if branch ~= state.branch then
     notify('SaffGitBranchChanged', { old = state.branch, new = branch })
-    g.git_branch = branch
+    state.branch = branch
   end
 
   return branch
@@ -118,7 +124,7 @@ local update_head = async(function()
   if head ~= state.head then
     update_branch(gen)
     notify('SaffGitHeadChanged', { old = state.head, new = head })
-    g.git_head = head
+    state.head = head
   end
 
   return head
@@ -137,7 +143,7 @@ local update_index = async(function()
 
   if index ~= state.index then
     notify('SaffGitIndexChanged', { old = state.index, new = index })
-    g.git_index = index
+    state.index = index
   end
 
   return index
