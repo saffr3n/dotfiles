@@ -149,15 +149,41 @@ local update_index = async(function()
   return index
 end)
 
+local function clear()
+  if state.dir then
+    notify('SaffGitDirChanged',    { old = state.dir,    new = nil })
+  end
+  if state.root then
+    notify('SaffGitRootChanged',   { old = state.root,   new = nil })
+  end
+  if state.branch then
+    notify('SaffGitBranchChanged', { old = state.branch, new = nil })
+  end
+  if state.head then
+    notify('SaffGitHeadChanged',   { old = state.head,   new = nil })
+  end
+  if state.index then
+    notify('SaffGitIndexChanged',  { old = state.index,  new = nil })
+  end
+
+  state = {}
+end
+
 api.nvim_create_autocmd({ 'VimEnter', 'DirChanged' }, {
   group    = api.nvim_create_augroup('saff.git', { clear = true }),
   callback = async(function()
     local cwd = vim.uv.cwd()
-    if not cwd then return end
+    if not cwd then
+      return clear()
+    end
 
     if cwd ~= state.cwd then
       state.cwd = cwd
-      if not await(update_dir()) then return end
+
+      if not await(update_dir()) then
+        return clear()
+      end
+
       update_root(state_gen)
     end
 
