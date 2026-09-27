@@ -6,6 +6,7 @@ local async, await = meanwhile.async, meanwhile.await
 
 local schedule = vim.schedule
 local trim     = vim.trim
+local uv       = vim.uv
 local api      = vim.api
 
 ---@type {
@@ -17,6 +18,9 @@ local api      = vim.api
 ---  index  : string?,
 ---}
 local state     = {}
+
+---@type uv.uv_fs_event_t?
+local watcher
 
 ---@param cmd string[]
 ---@param cb  fun(err?: string, out?: string)
@@ -149,7 +153,37 @@ local update_index = async(function()
   return index
 end)
 
+---@param err string?
+local function on_dir_changed(err)
+  if err then
+    return error(err)
+  end
+
+  schedule(function()
+    update_head()
+    update_index()
+  end)
+end
+
+local function stop_watcher()
+  if not watcher then return end
+  if not watcher:is_closing() then
+    watcher:close()
+  end
+  watcher = nil
+end
+
+local function start_watcher()
+  stop_watcher()
+  if not state.dir then return end
+  watcher = uv.new_fs_event()
+  if not watcher then return end
+  watcher:start(state.dir, {}, on_dir_changed)
+end
+
 local function clear()
+  stop_watcher()
+
   if state.dir then
     notify('SaffGitDirChanged',    { old = state.dir,    new = nil })
   end
@@ -172,7 +206,7 @@ end
 api.nvim_create_autocmd({ 'VimEnter', 'DirChanged' }, {
   group    = api.nvim_create_augroup('saff.git', { clear = true }),
   callback = async(function()
-    local cwd = vim.uv.cwd()
+    local cwd = uv.cwd()
     if not cwd then
       return clear()
     end
@@ -184,6 +218,7 @@ api.nvim_create_autocmd({ 'VimEnter', 'DirChanged' }, {
         return clear()
       end
 
+      start_watcher()
       update_root(state_gen)
     end
 
