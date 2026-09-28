@@ -18,9 +18,11 @@ local api      = vim.api
 ---  index  : string?,
 ---}
 local state     = {}
+local state_gen = 0
 
 ---@type uv.uv_fs_event_t?
 local watcher
+local watcher_gen = 0
 
 ---@param cmd string[]
 ---@param cb  fun(err?: string, out?: string)
@@ -54,8 +56,11 @@ local function notify(event, data)
   end)
 end
 
-local update_dir = async(function()
+---@param gen integer
+local update_dir = async(function(gen)
   local dir, err = await(syscall({ 'git', 'rev-parse', '--git-dir' }))
+  if gen ~= state_gen then return end
+
   if err then
     return error(err)
   end
@@ -73,8 +78,11 @@ local update_dir = async(function()
   return dir
 end)
 
-local update_root = async(function()
+---@param gen integer
+local update_root = async(function(gen)
   local root, err = await(syscall({ 'git', 'rev-parse', '--show-toplevel' }))
+  if gen ~= state_gen then return end
+
   if err then
     return error(err)
   end
@@ -92,10 +100,15 @@ local update_root = async(function()
   return root
 end)
 
-local update_branch = async(function()
+---@param gen integer
+local update_branch = async(function(gen)
   local branch, err = await(syscall({ 'git', 'symbolic-ref', '--short', 'HEAD' }))
+  if gen ~= state_gen then return end
+
   if err then
     branch, err = await(syscall({ 'git', 'rev-parse', '--short', 'HEAD' }))
+    if gen ~= state_gen then return end
+
     if err then
       return error(err)
     end
@@ -114,8 +127,11 @@ local update_branch = async(function()
   return branch
 end)
 
-local update_head = async(function()
+---@param gen integer
+local update_head = async(function(gen)
   local head, err = await(syscall({ 'git', 'rev-parse', 'HEAD' }))
+  if gen ~= state_gen then return end
+
   if err then
     return error(err)
   end
@@ -134,8 +150,11 @@ local update_head = async(function()
   return head
 end)
 
-local update_index = async(function()
+---@param gen integer
+local update_index = async(function(gen)
   local index, err = await(syscall({ 'git', 'write-tree' }))
+  if gen ~= state_gen then return end
+
   if err then
     return error(err)
   end
@@ -159,9 +178,14 @@ local function on_dir_changed(err)
     return error(err)
   end
 
+  watcher_gen     = watcher_gen + 1
+  local this_wgen = watcher_gen
+  local this_sgen = state_gen
+
   schedule(function()
-    update_head()
-    update_index()
+    if watcher_gen ~= this_wgen then return end
+    update_head(this_sgen)
+    update_index(this_sgen)
   end)
 end
 
@@ -182,6 +206,7 @@ local function start_watcher()
 end
 
 local function clear()
+  state_gen = state_gen + 1
   stop_watcher()
 
   if state.dir then
@@ -212,9 +237,10 @@ api.nvim_create_autocmd({ 'VimEnter', 'DirChanged' }, {
     end
 
     if cwd ~= state.cwd then
+      state_gen = state_gen + 1
       state.cwd = cwd
 
-      if not await(update_dir()) then
+      if not await(update_dir(state_gen)) then
         return clear()
       end
 
