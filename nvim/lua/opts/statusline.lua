@@ -12,6 +12,7 @@ o.showmode   = false
 vim.g.qf_disable_statusline = 1
 
 ---@type table<integer, {
+---  git_branch : string,
 ---  lsp_count  : string,
 ---  diag_count : string,
 ---  fsize      : string,
@@ -50,11 +51,13 @@ function _G.SaffStatusLine()
   local buf   = api.nvim_get_current_buf()
   local s     = state[buf]
 
+  local git_branch = ''
   local lsp_count  = ''
   local diag_count = ''
   local fsize      = ''
 
   if s then
+    git_branch = s.git_branch
     lsp_count  = s.lsp_count
     diag_count = s.diag_count
     fsize      = s.fsize
@@ -67,6 +70,9 @@ function _G.SaffStatusLine()
   -- devinfo section
   local devinfo_parts = { info_hl }
 
+  if git_branch ~= '' then
+    table.insert(devinfo_parts, git_branch)
+  end
   if lsp_count  ~= '' then
     table.insert(devinfo_parts, lsp_count)
   end
@@ -115,6 +121,16 @@ end
 ---@param buf integer
 local function redraw(buf)
   api.nvim__redraw({ buf = buf, statusline = true })
+end
+
+---@param buf  integer
+---@param name string?
+local function update_git_branch(buf, name)
+  local s   = state[buf]
+  if not s then return end
+
+  s.git_branch = name and (' ' .. name) or ''
+  redraw(buf)
 end
 
 ---@param buf integer
@@ -191,6 +207,7 @@ aucmd('BufEnter', function(e)
   end
 
   state[buf] = state[buf] or {
+    git_branch = '',
     lsp_count  = '',
     diag_count = '',
     fsize      = '',
@@ -216,3 +233,11 @@ end)
 aucmd('DiagnosticChanged', function(e)
   update_diag_count(e.buf)
 end)
+
+api.nvim_create_autocmd('User', {
+  group    = group,
+  pattern  = 'SaffGitBranchChanged',
+  callback = function(e)
+    update_git_branch(e.buf, e.data.new)
+  end,
+})
