@@ -228,27 +228,29 @@ local function clear()
   state = {}
 end
 
-api.nvim_create_autocmd({ 'VimEnter', 'DirChanged' }, {
-  group    = api.nvim_create_augroup('saff.git', { clear = true }),
-  callback = async(function()
-    local cwd = uv.cwd()
-    if not cwd then
+local init = async(function()
+  local cwd = uv.cwd()
+  if not cwd then
+    return clear()
+  end
+
+  if cwd ~= state.cwd then
+    state_gen = state_gen + 1
+    state.cwd = cwd
+
+    if not await(update_dir(state_gen)) then
       return clear()
     end
 
-    if cwd ~= state.cwd then
-      state_gen = state_gen + 1
-      state.cwd = cwd
+    start_watcher()
+    update_root(state_gen)
+  end
 
-      if not await(update_dir(state_gen)) then
-        return clear()
-      end
+  update_head(state_gen)
+  update_index(state_gen)
+end)
 
-      start_watcher()
-      update_root(state_gen)
-    end
-
-    update_head(state_gen)
-    update_index(state_gen)
-  end),
+api.nvim_create_autocmd({ 'VimEnter', 'DirChanged' }, {
+  group    = api.nvim_create_augroup('saff.git', { clear = true }),
+  callback = init,
 })
