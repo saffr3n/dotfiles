@@ -5,6 +5,7 @@
       tree-sitter
       nixd
       emmylua-ls
+      clang-tools
     ];
 
     sessionVariables = {
