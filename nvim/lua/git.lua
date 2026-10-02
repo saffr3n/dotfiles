@@ -4,7 +4,6 @@ local meanwhile    = require('meanwhile')
 local promisify    = meanwhile.promisify
 local async, await = meanwhile.async, meanwhile.await
 
-local schedule = vim.schedule
 local trim     = vim.trim
 local uv       = vim.uv
 local api      = vim.api
@@ -51,9 +50,7 @@ end
 ---| 'SaffGitIndexChanged'
 ---@param data { old?: string, new?: string }
 local function notify(event, data)
-  schedule(function()
-    api.nvim_exec_autocmds('User', { pattern = event, data = data })
-  end)
+  api.nvim_exec_autocmds('User', { pattern = event, data = data })
 end
 
 ---@param gen integer
@@ -182,7 +179,7 @@ local function on_dir_changed(err)
   local this_wgen = watcher_gen
   local this_sgen = state_gen
 
-  schedule(function()
+  vim.schedule(function()
     if watcher_gen ~= this_wgen then return end
     update_head(this_sgen)
     update_index(this_sgen)
