@@ -4,7 +4,6 @@ local meanwhile    = require('meanwhile')
 local promisify    = meanwhile.promisify
 local async, await = meanwhile.async, meanwhile.await
 
-local trim     = vim.trim
 local uv       = vim.uv
 local api      = vim.api
 
@@ -32,7 +31,8 @@ local syscall = promisify(function(cmd, cb)
     if out.code ~= 0 then
       cb(out.stderr .. trace)
     else
-      cb(nil, out.stdout)
+      local res = vim.trim(out.stdout--[[@cast -?]])
+      cb(nil, res == '' and nil or res)
     end
   end)
 end)
@@ -62,11 +62,6 @@ local update_dir = async(function(gen)
     return error(err)
   end
 
-  dir = trim(dir--[[@cast -?]])
-  if dir == '' then
-    dir = nil
-  end
-
   if dir ~= state.dir then
     notify('SaffGitDirChanged', { old = state.dir, new = dir })
     state.dir = dir
@@ -82,11 +77,6 @@ local update_root = async(function(gen)
 
   if err then
     return error(err)
-  end
-
-  root = trim(root--[[@cast -?]])
-  if root == '' then
-    root = nil
   end
 
   if root ~= state.root then
@@ -111,11 +101,6 @@ local update_branch = async(function(gen)
     end
   end
 
-  branch = trim(branch--[[@cast -?]])
-  if branch == '' then
-    branch = nil
-  end
-
   if branch ~= state.branch then
     notify('SaffGitBranchChanged', { old = state.branch, new = branch })
     state.branch = branch
@@ -131,11 +116,6 @@ local update_head = async(function(gen)
 
   if err then
     return error(err)
-  end
-
-  head = trim(head--[[@cast -?]])
-  if head == '' then
-    head = nil
   end
 
   if head ~= state.head then
@@ -154,11 +134,6 @@ local update_index = async(function(gen)
 
   if err then
     return error(err)
-  end
-
-  index = trim(index--[[@cast -?]])
-  if index == '' then
-    index = nil
   end
 
   if index ~= state.index then
