@@ -57,10 +57,7 @@ end
 local update_dir = async(function(gen)
   local dir, err = await(syscall({ 'git', 'rev-parse', '--git-dir' }))
   if gen ~= state_gen then return end
-
-  if err then
-    return error(err)
-  end
+  if err then return error(err) end
 
   if dir ~= state.dir then
     notify('SaffGitDirChanged', { old = state.dir, new = dir })
@@ -74,10 +71,7 @@ end)
 local update_root = async(function(gen)
   local root, err = await(syscall({ 'git', 'rev-parse', '--show-toplevel' }))
   if gen ~= state_gen then return end
-
-  if err then
-    return error(err)
-  end
+  if err then return error(err) end
 
   if root ~= state.root then
     notify('SaffGitRootChanged', { old = state.root, new = root })
@@ -91,14 +85,10 @@ end)
 local update_branch = async(function(gen)
   local branch, err = await(syscall({ 'git', 'symbolic-ref', '--short', 'HEAD' }))
   if gen ~= state_gen then return end
-
   if err then
     branch, err = await(syscall({ 'git', 'rev-parse', '--short', 'HEAD' }))
     if gen ~= state_gen then return end
-
-    if err then
-      return error(err)
-    end
+    if err then return error(err) end
   end
 
   if branch ~= state.branch then
@@ -113,10 +103,7 @@ end)
 local update_head = async(function(gen)
   local head, err = await(syscall({ 'git', 'rev-parse', 'HEAD' }))
   if gen ~= state_gen then return end
-
-  if err then
-    return error(err)
-  end
+  if err then return error(err) end
 
   if head ~= state.head then
     update_branch(gen)
@@ -131,10 +118,7 @@ end)
 local update_index = async(function(gen)
   local index, err = await(syscall({ 'git', 'write-tree' }))
   if gen ~= state_gen then return end
-
-  if err then
-    return error(err)
-  end
+  if err then return error(err) end
 
   if index ~= state.index then
     notify('SaffGitIndexChanged', { old = state.index, new = index })
@@ -146,9 +130,7 @@ end)
 
 ---@param err string?
 local function on_dir_changed(err)
-  if err then
-    return error(err)
-  end
+  if err then return error(err) end
 
   watcher_gen     = watcher_gen + 1
   local this_wgen = watcher_gen
@@ -163,56 +145,43 @@ end
 
 local function stop_watcher()
   if not watcher then return end
-  if not watcher:is_closing() then
-    watcher:close()
-  end
+  if not watcher:is_closing() then watcher:close() end
   watcher = nil
 end
 
 local function start_watcher()
   stop_watcher()
-  if not state.dir then return end
+
+  local dir = state.dir
+  if not dir then return end
+
   watcher = uv.new_fs_event()
   if not watcher then return end
-  watcher:start(state.dir, {}, on_dir_changed)
+  watcher:start(dir, {}, on_dir_changed)
 end
 
 local function clear()
   state_gen = state_gen + 1
   stop_watcher()
 
-  if state.dir then
-    notify('SaffGitDirChanged',    { old = state.dir,    new = nil })
-  end
-  if state.root then
-    notify('SaffGitRootChanged',   { old = state.root,   new = nil })
-  end
-  if state.branch then
-    notify('SaffGitBranchChanged', { old = state.branch, new = nil })
-  end
-  if state.head then
-    notify('SaffGitHeadChanged',   { old = state.head,   new = nil })
-  end
-  if state.index then
-    notify('SaffGitIndexChanged',  { old = state.index,  new = nil })
-  end
+  if state.dir    then notify('SaffGitDirChanged',    { old = state.dir,    new = nil }) end
+  if state.root   then notify('SaffGitRootChanged',   { old = state.root,   new = nil }) end
+  if state.branch then notify('SaffGitBranchChanged', { old = state.branch, new = nil }) end
+  if state.head   then notify('SaffGitHeadChanged',   { old = state.head,   new = nil }) end
+  if state.index  then notify('SaffGitIndexChanged',  { old = state.index,  new = nil }) end
 
   state = {}
 end
 
 local init = async(function()
   local cwd = uv.cwd()
-  if not cwd then
-    return clear()
-  end
+  if not cwd then return clear() end
 
   if cwd ~= state.cwd then
     state_gen = state_gen + 1
     state.cwd = cwd
 
-    if not await(update_dir(state_gen)) then
-      return clear()
-    end
+    if not await(update_dir(state_gen)) then return clear() end
 
     start_watcher()
     update_root(state_gen)
