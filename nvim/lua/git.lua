@@ -174,21 +174,23 @@ local function clear()
 end
 
 local init = async(function()
+  local gen = state_gen
   local cwd = uv.cwd()
   if not cwd then return clear() end
 
   if cwd ~= state.cwd then
-    state_gen = state_gen + 1
+    gen       = gen + 1
+    state_gen = gen
     state.cwd = cwd
 
-    if not await(update_dir(state_gen)) then return clear() end
+    if not await(update_dir(gen)) then return clear() end
 
     start_watcher()
-    update_root(state_gen)
+    update_root(gen)
   end
 
-  update_head(state_gen)
-  update_index(state_gen)
+  update_head(gen)
+  update_index(gen)
 end)
 
 api.nvim_create_autocmd({ 'VimEnter', 'DirChanged' }, {
