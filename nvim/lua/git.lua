@@ -1,11 +1,12 @@
-if vim.fn.executable('git') == 0 then return end
-
 local meanwhile    = require('meanwhile')
 local promisify    = meanwhile.promisify
 local async, await = meanwhile.async, meanwhile.await
 
-local uv       = vim.uv
-local api      = vim.api
+local fn  = vim.fn
+local uv  = vim.uv
+local api = vim.api
+
+if fn.executable('git') == 0 then return end
 
 ---@type {
 ---  cwd    : string?,
@@ -20,7 +21,6 @@ local state_gen = 0
 
 ---@type uv.uv_fs_event_t?
 local watcher
-local watcher_gen = 0
 
 ---@param cmd string[]
 ---@param cb  fun(err?: string, out?: string)
@@ -33,6 +33,46 @@ local syscall = promisify(function(cmd, cb)
     else
       local res = vim.trim(out.stdout--[[@cast -?]])
       cb(nil, res == '' and nil or res)
+    end
+  end)
+end)
+
+---@param path  string
+---@param flags string | integer
+---@param mode  integer
+---@param cb    fun(err?: string, fd?: integer)
+local fs_open = promisify(function(path, flags, mode, cb)
+  uv.fs_open(path, flags, mode, function(err, fd)
+    if err then
+      cb(err)
+    else
+      cb(nil, fd)
+    end
+  end)
+end)
+
+---@param fd integer
+---@param cb fun(err?: string, stat?: uv.fs_stat.result)
+local fs_stat = promisify(function(fd, cb)
+  uv.fs_fstat(fd, function(err, stat)
+    if err then
+      cb(err)
+    else
+      cb(nil, stat)
+    end
+  end)
+end)
+
+---@param fd     integer
+---@param size   integer
+---@param offset integer
+---@param cb     fun(err?: string, data?: string)
+local fs_read = promisify(function(fd, size, offset, cb)
+  uv.fs_read(fd, size, offset, function(err, data)
+    if err then
+      cb(err)
+    else
+      cb(nil, data)
     end
   end)
 end)
@@ -116,10 +156,38 @@ end)
 
 ---@param gen integer
 local update_index = async(function(gen)
-  local index, err = await(syscall({ 'git', 'write-tree' }))
-  if gen ~= state_gen then return end
-  if err then return error(err) end
+  local path, err_path = await(syscall({ 'git', 'rev-parse', '--git-path', 'index' }))
+  if gen ~= state.gen then return end
+  if err_path then return error(err_path) end ---@cast path -?
+  path = fn.fnamemodify(path, ':p')
 
+  local fd, err_fd = await(fs_open(path, 'r', 0))
+  if gen ~= state.gen then return end
+  if err_fd then return error(err_fd) end ---@cast fd -?
+
+  local stat, err_stat = await(fs_stat(fd))
+  if gen ~= state.gen then
+    uv.fs_close(fd)
+    return
+  end
+  if err_stat then
+    uv.fs_close(fd)
+    return error(err_stat)
+  end ---@cast stat -?
+
+  local data, err_data = await(fs_read(fd, stat.size, 0))
+  if gen ~= state.gen then
+    uv.fs_close(fd)
+    return
+  end
+  if err_data then
+    uv.fs_close(fd)
+    return error(err_data)
+  end ---@cast data -?
+
+  uv.fs_close(fd)
+
+  local index = fn.sha256(data)
   if index ~= state.index then
     notify('SaffGitIndexChanged', { old = state.index, new = index })
     state.index = index
@@ -131,16 +199,8 @@ end)
 ---@param err string?
 local function on_dir_changed(err)
   if err then return error(err) end
-
-  watcher_gen     = watcher_gen + 1
-  local this_wgen = watcher_gen
-  local this_sgen = state_gen
-
-  vim.schedule(function()
-    if watcher_gen ~= this_wgen then return end
-    update_head(this_sgen)
-    update_index(this_sgen)
-  end)
+  update_head(state_gen)
+  update_index(state_gen)
 end
 
 local function stop_watcher()
