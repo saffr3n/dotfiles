@@ -9,15 +9,15 @@ local api = vim.api
 if fn.executable('git') == 0 then return end
 
 ---@type {
----  cwd    : string?,
----  dir    : string?,
----  root   : string?,
----  branch : string?,
----  head   : string?,
----  index  : string?,
+---  gen     : integer,
+---  cwd?    : string,
+---  dir?    : string,
+---  root?   : string,
+---  branch? : string,
+---  head?   : string,
+---  index?  : string,
 ---}
-local state     = {}
-local state_gen = 0
+local state = { gen = 0 }
 
 ---@type uv.uv_fs_event_t?
 local watcher
@@ -96,7 +96,7 @@ end
 ---@param gen integer
 local update_dir = async(function(gen)
   local dir, err = await(syscall({ 'git', 'rev-parse', '--git-dir' }))
-  if gen ~= state_gen then return end
+  if gen ~= state.gen then return end
   if err then return error(err) end
 
   if dir ~= state.dir then
@@ -110,7 +110,7 @@ end)
 ---@param gen integer
 local update_root = async(function(gen)
   local root, err = await(syscall({ 'git', 'rev-parse', '--show-toplevel' }))
-  if gen ~= state_gen then return end
+  if gen ~= state.gen then return end
   if err then return error(err) end
 
   if root ~= state.root then
@@ -124,10 +124,10 @@ end)
 ---@param gen integer
 local update_branch = async(function(gen)
   local branch, err = await(syscall({ 'git', 'symbolic-ref', '--short', 'HEAD' }))
-  if gen ~= state_gen then return end
+  if gen ~= state.gen then return end
   if err then
     branch, err = await(syscall({ 'git', 'rev-parse', '--short', 'HEAD' }))
-    if gen ~= state_gen then return end
+    if gen ~= state.gen then return end
     if err then return error(err) end
   end
 
@@ -142,7 +142,7 @@ end)
 ---@param gen integer
 local update_head = async(function(gen)
   local head, err = await(syscall({ 'git', 'rev-parse', 'HEAD' }))
-  if gen ~= state_gen then return end
+  if gen ~= state.gen then return end
   if err then return error(err) end
 
   if head ~= state.head then
@@ -199,8 +199,8 @@ end)
 ---@param err string?
 local function on_dir_changed(err)
   if err then return error(err) end
-  update_head(state_gen)
-  update_index(state_gen)
+  update_head(state.gen)
+  update_index(state.gen)
 end
 
 local function stop_watcher()
@@ -221,7 +221,6 @@ local function start_watcher()
 end
 
 local function clear()
-  state_gen = state_gen + 1
   stop_watcher()
 
   if state.dir    then notify('SaffGitDirChanged',    { old = state.dir,    new = nil }) end
@@ -230,17 +229,17 @@ local function clear()
   if state.head   then notify('SaffGitHeadChanged',   { old = state.head,   new = nil }) end
   if state.index  then notify('SaffGitIndexChanged',  { old = state.index,  new = nil }) end
 
-  state = {}
+  state = { gen = state.gen + 1 }
 end
 
 local init = async(function()
-  local gen = state_gen
+  local gen = state.gen
   local cwd = uv.cwd()
   if not cwd then return clear() end
 
   if cwd ~= state.cwd then
     gen       = gen + 1
-    state_gen = gen
+    state.gen = gen
     state.cwd = cwd
 
     if not await(update_dir(gen)) then return clear() end
