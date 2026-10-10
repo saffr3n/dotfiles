@@ -1,4 +1,6 @@
+local utils        = require('utils')
 local meanwhile    = require('meanwhile')
+local Promise      = meanwhile.Promise
 local promisify    = meanwhile.promisify
 local async, await = meanwhile.async, meanwhile.await
 
@@ -9,13 +11,14 @@ local api = vim.api
 if fn.executable('git') == 0 then return end
 
 ---@type {
----  gen     : integer,
----  cwd?    : string,
----  dir?    : string,
----  root?   : string,
----  branch? : string,
----  head?   : string,
----  index?  : string,
+---  gen        : integer,
+---  cwd?       : string,
+---  dir?       : string,
+---  root?      : string,
+---  branch?    : string,
+---  head?      : string,
+---  index?     : string,
+---  [integer]? : { path: string },
 ---}
 local state = { gen = 0 }
 
@@ -220,6 +223,25 @@ local function start_watcher()
   watcher:start(dir, {}, on_dir_changed)
 end
 
+---@param buf integer
+local function get_buf_path(buf)
+  local bo = vim.bo[buf]
+  if not state.root
+    or not api.nvim_buf_is_valid(buf)
+    or not bo.modifiable
+    or bo.buftype ~= ''
+  then return nil end
+
+  local name = api.nvim_buf_get_name(buf)
+  if name == '' then return nil end
+  return vim.fs.relpath(state.root, name)
+end
+
+---@param buf integer
+local function clear_buf(buf)
+  state[buf] = nil
+end
+
 local function clear()
   stop_watcher()
 
@@ -232,10 +254,26 @@ local function clear()
   state = { gen = state.gen + 1 }
 end
 
+---@param buf integer
+local function init_buf(buf)
+  local path = get_buf_path(buf)
+  if not path then return clear_buf(buf) end
+
+  local s = state[buf]
+  if not s then
+    state[buf] = { path = path }
+    s          = state[buf]
+  elseif path ~= s.path then
+    s.path = path
+  end
+end
+
 local init = async(function()
-  local gen = state.gen
   local cwd = uv.cwd()
   if not cwd then return clear() end
+
+  local gen   = state.gen
+  local tasks = {}
 
   if cwd ~= state.cwd then
     gen       = gen + 1
@@ -243,13 +281,15 @@ local init = async(function()
     state.cwd = cwd
 
     if not await(update_dir(gen)) then return clear() end
-
     start_watcher()
-    update_root(gen)
+    table.insert(tasks, update_root(gen))
   end
 
-  update_head(gen)
-  update_index(gen)
+  table.insert(tasks, update_head(gen))
+  table.insert(tasks, update_index(gen))
+  await(Promise.all(tasks))
+
+  utils.for_visible_bufs(function(buf) init_buf(buf) end)
 end)
 
 api.nvim_create_autocmd({ 'VimEnter', 'DirChanged' }, {
