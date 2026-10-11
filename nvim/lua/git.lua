@@ -35,7 +35,11 @@ local syscall = promisify(function(cmd, cb)
       cb(out.stderr .. trace)
     else
       local res = vim.trim(out.stdout--[[@cast -?]])
-      cb(nil, res == '' and nil or res)
+      if res == '' then
+        cb(nil, nil)
+      else
+        cb(nil, res)
+      end
     end
   end)
 end)
