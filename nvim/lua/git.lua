@@ -101,6 +101,7 @@ local function notify(event, data)
 end
 
 ---@param gen integer
+---@return string?
 local update_dir = async(function(gen)
   local dir, err = await(syscall({ 'git', 'rev-parse', '--git-dir' }))
   if gen ~= state.gen then return end
@@ -115,6 +116,7 @@ local update_dir = async(function(gen)
 end)
 
 ---@param gen integer
+---@return string?
 local update_root = async(function(gen)
   local root, err = await(syscall({ 'git', 'rev-parse', '--show-toplevel' }))
   if gen ~= state.gen then return end
@@ -129,6 +131,7 @@ local update_root = async(function(gen)
 end)
 
 ---@param gen integer
+---@return string?
 local update_branch = async(function(gen)
   local branch, err = await(syscall({ 'git', 'symbolic-ref', '--short', 'HEAD' }))
   if gen ~= state.gen then return end
@@ -147,6 +150,7 @@ local update_branch = async(function(gen)
 end)
 
 ---@param gen integer
+---@return string?
 local update_head = async(function(gen)
   local head, err = await(syscall({ 'git', 'rev-parse', 'HEAD' }))
   if gen ~= state.gen then return end
@@ -162,6 +166,7 @@ local update_head = async(function(gen)
 end)
 
 ---@param gen integer
+---@return string?
 local update_index = async(function(gen)
   local path, err_path = await(syscall({ 'git', 'rev-parse', '--git-path', 'index' }))
   if gen ~= state.gen then return end
