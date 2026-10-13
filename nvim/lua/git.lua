@@ -29,16 +29,14 @@ local watcher
 ---@param cb  fun(err?: string, out?: string)
 local syscall = promisify(function(cmd, cb)
   local trace = debug.traceback('', 6)
-
   vim.system(cmd, function(out)
     if out.code ~= 0 then
-      cb(out.stderr .. trace)
+      cb(out.stderr .. trace, nil)
     else
       local res = vim.trim(out.stdout--[[@cast -?]])
-      if res == '' then
-        cb(nil, nil)
-      else
-        cb(nil, res)
+      if res == ''
+        then cb(nil, nil)
+        else cb(nil, res)
       end
     end
   end)
@@ -50,10 +48,9 @@ end)
 ---@param cb    fun(err?: string, fd?: integer)
 local fs_open = promisify(function(path, flags, mode, cb)
   uv.fs_open(path, flags, mode, function(err, fd)
-    if err then
-      cb(err)
-    else
-      cb(nil, fd)
+    if err
+      then cb(err, nil)
+      else cb(nil, fd)
     end
   end)
 end)
@@ -62,10 +59,9 @@ end)
 ---@param cb fun(err?: string, stat?: uv.fs_stat.result)
 local fs_stat = promisify(function(fd, cb)
   uv.fs_fstat(fd, function(err, stat)
-    if err then
-      cb(err)
-    else
-      cb(nil, stat)
+    if err
+      then cb(err, nil)
+      else cb(nil, stat)
     end
   end)
 end)
@@ -76,10 +72,9 @@ end)
 ---@param cb     fun(err?: string, data?: string)
 local fs_read = promisify(function(fd, size, offset, cb)
   uv.fs_read(fd, size, offset, function(err, data)
-    if err then
-      cb(err)
-    else
-      cb(nil, data)
+    if err
+      then cb(err, nil)
+      else cb(nil, data)
     end
   end)
 end)
@@ -188,16 +183,9 @@ local update_index = async(function(gen)
   end ---@cast stat -?
 
   local data, err_data = await(fs_read(fd, stat.size, 0))
-  if gen ~= state.gen then
-    uv.fs_close(fd)
-    return
-  end
-  if err_data then
-    uv.fs_close(fd)
-    return error(err_data)
-  end ---@cast data -?
-
   uv.fs_close(fd)
+  if gen ~= state.gen then return end
+  if err_data then return error(err_data) end ---@cast data -?
 
   local index = fn.sha256(data)
   if index ~= state.index then
