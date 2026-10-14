@@ -18,7 +18,10 @@ if fn.executable('git') == 0 then return end
 ---  branch?    : string,
 ---  head?      : string,
 ---  index?     : string,
----  [integer]? : { path: string },
+---  [integer]? : {
+---    path    : string,
+---    status? : string,
+---  },
 ---}
 local state = { gen = 0 }
 
@@ -90,7 +93,8 @@ end
 ---| 'SaffGitBranchChanged'
 ---| 'SaffGitHeadChanged'
 ---| 'SaffGitIndexChanged'
----@param data { old?: string, new?: string }
+---| 'SaffGitStatusChanged'
+---@param data { old?: string, new?: string, buf?: integer }
 local function notify(event, data)
   api.nvim_exec_autocmds('User', { pattern = event, data = data })
 end
@@ -196,6 +200,34 @@ local update_index = async(function(gen)
   return index
 end)
 
+---@param gen integer
+---@param buf integer
+---@return string?
+local update_status = async(function(gen, buf)
+  local s = state[buf]
+  if not s then return end
+
+  local status, err = await(syscall({ 'git', '-C', state.root, 'status', '--short', s.path }))
+  if gen ~= state.gen then return end
+  if err then return error(err) end
+  status = status and status:sub(1, 2)
+
+  if status ~= s.status then
+    notify('SaffGitStatusChanged', { old = s.status, new = status, buf = buf })
+    s.status = status
+  end
+
+  return status
+end)
+
+---@param gen integer
+---@param buf integer
+local update_buf = async(function(gen, buf)
+  local s = state[buf]
+  if not s then return end
+  update_status(gen, buf)
+end)
+
 ---@param err string?
 local function on_dir_changed(err)
   if err then return error(err) end
@@ -260,9 +292,13 @@ local function init_buf(buf)
   if not s then
     state[buf] = { path = path }
     s          = state[buf]
+    -- attach diffs updater
   elseif path ~= s.path then
     s.path = path
+    -- clear current diffs
   end
+
+  update_buf(state.gen, buf)
 end
 
 local init = async(function()
