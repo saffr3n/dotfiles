@@ -269,6 +269,11 @@ end
 
 ---@param buf integer
 local function clear_buf(buf)
+  local s = state[buf]
+  if not s then return end
+
+  if s.status then notify('SaffGitStatusChanged', { old = s.status, new = nil }, buf) end
+
   state[buf] = nil
 end
 
