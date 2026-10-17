@@ -11,13 +11,16 @@ o.showmode   = false
 
 vim.g.qf_disable_statusline = 1
 
----@type table<integer, {
+---@type {
 ---  git_branch : string,
----  lsp_count  : string,
----  diag_count : string,
----  fsize      : string,
----}?>
-local state   = {}
+---  [integer]? : {
+---    git_status : string,
+---    lsp_count  : string,
+---    diag_count : string,
+---    fsize      : string,
+---  },
+---}
+local state   = { git_branch = '' }
 local info_hl = '%#SaffStatusLineInfo#'
 local group   = api.nvim_create_augroup('saff.statusline', { clear = true })
 
@@ -51,13 +54,12 @@ function _G.SaffStatusLine()
   local buf   = api.nvim_get_current_buf()
   local s     = state[buf]
 
-  local git_branch = ''
+  local git_branch = state.git_branch
   local lsp_count  = ''
   local diag_count = ''
   local fsize      = ''
 
   if s then
-    git_branch = s.git_branch
     lsp_count  = s.lsp_count
     diag_count = s.diag_count
     fsize      = s.fsize
@@ -126,10 +128,7 @@ end
 ---@param buf  integer
 ---@param name string?
 local function update_git_branch(buf, name)
-  local s   = state[buf]
-  if not s then return end
-
-  s.git_branch = name and (' ' .. name) or ''
+  state.git_branch = name and (' ' .. name) or ''
   redraw(buf)
 end
 
@@ -206,20 +205,21 @@ aucmd('BufEnter', function(e)
     return clear(buf)
   end
 
-  state[buf] = state[buf] or {
-    git_branch = '',
-    lsp_count  = '',
-    diag_count = '',
-    fsize      = '',
-  }
+  if not state[buf] then
+    state[buf] = {
+      lsp_count  = '',
+      diag_count = '',
+      fsize      = '',
+    }
 
-  api.nvim_buf_attach(buf, false, {
-    on_lines  = function() update_fsize(buf) end,
-    on_reload = function() update_fsize(buf) end,
-    on_detach = function() clear(buf)        end,
-  })
+    api.nvim_buf_attach(buf, false, {
+      on_lines  = function() update_fsize(buf) end,
+      on_reload = function() update_fsize(buf) end,
+      on_detach = function() clear(buf)        end,
+    })
 
-  update_fsize(buf)
+    update_fsize(buf)
+  end
 end)
 
 aucmd('BufWipeout', function(e)
@@ -238,6 +238,10 @@ api.nvim_create_autocmd('User', {
   group    = group,
   pattern  = 'SaffGitBranchChanged',
   callback = function(e)
-    update_git_branch(e.buf, e.data.new)
+    for buf, _ in pairs(state) do
+      if type(buf) == 'number' then
+        update_git_branch(buf, e.data.new)
+      end
+    end
   end,
 })
