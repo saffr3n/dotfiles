@@ -95,9 +95,8 @@ end
 ---| 'SaffGitIndexChanged'
 ---| 'SaffGitStatusChanged'
 ---@param data { old?: string, new?: string }
----@param buf? integer
-local function notify(event, data, buf)
-  api.nvim_exec_autocmds('User', { pattern = event, data = data, buf = buf })
+local function notify(event, data)
+  api.nvim_exec_autocmds('User', { pattern = event, data = data })
 end
 
 ---@param gen integer
@@ -214,7 +213,7 @@ local update_status = async(function(gen, buf)
   status = status and status:sub(1, 2)
 
   if status ~= s.status then
-    notify('SaffGitStatusChanged', { old = s.status, new = status }, buf)
+    notify('SaffGitStatusChanged', { old = s.status, new = status })
     s.status = status
   end
 
@@ -272,7 +271,7 @@ local function clear_buf(buf)
   local s = state[buf]
   if not s then return end
 
-  if s.status then notify('SaffGitStatusChanged', { old = s.status, new = nil }, buf) end
+  if s.status then notify('SaffGitStatusChanged', { old = s.status, new = nil }) end
 
   state[buf] = nil
 end
