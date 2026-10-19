@@ -6,7 +6,7 @@ local o   = vim.o
 local uv  = vim.uv
 local api = vim.api
 
-local TIMEOUT = 300
+local TIMEOUT = 1000
 local EXCLUDE = {
   ['.git']     = true,
   node_modules = true,
