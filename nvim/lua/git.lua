@@ -156,7 +156,6 @@ local update_head = async(function(gen)
   if err then return error(err) end
 
   if head ~= state.head then
-    update_branch(gen)
     notify('SaffGitHeadChanged', { old = state.head, new = head })
     state.head = head
   end
@@ -232,6 +231,7 @@ end)
 local function on_dir_changed(err)
   if err then return error(err) end
   update_head(state.gen)
+  update_branch(state.gen)
   update_index(state.gen)
 end
 
@@ -324,6 +324,7 @@ local init = async(function()
   end
 
   table.insert(tasks, update_head(gen))
+  table.insert(tasks, update_branch(gen))
   table.insert(tasks, update_index(gen))
   await(Promise.all(tasks))
 
