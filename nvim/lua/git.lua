@@ -33,14 +33,9 @@ local watcher
 local syscall = promisify(function(cmd, cb)
   local trace = debug.traceback('', 6)
   vim.system(cmd, function(out)
-    if out.code ~= 0 then
-      cb(out.stderr .. trace, nil)
-    else
-      local res = vim.trim(out.stdout--[[@cast -?]])
-      if res == ''
-        then cb(nil, nil)
-        else cb(nil, res)
-      end
+    if out.code ~= 0
+      then cb(out.stderr .. trace, nil)
+      else cb(nil, out.stdout)
     end
   end)
 end)
@@ -104,7 +99,8 @@ end
 local update_dir = async(function(gen)
   local dir, err = await(syscall({ 'git', 'rev-parse', '--git-dir' }))
   if gen ~= state.gen then return end
-  if err then return error(err) end
+  if err then return error(err) end ---@cast dir -?
+  dir = vim.trim(dir)
 
   if dir ~= state.dir then
     notify('SaffGitDirChanged', { old = state.dir, new = dir })
@@ -119,7 +115,8 @@ end)
 local update_root = async(function(gen)
   local root, err = await(syscall({ 'git', 'rev-parse', '--show-toplevel' }))
   if gen ~= state.gen then return end
-  if err then return error(err) end
+  if err then return error(err) end ---@cast root -?
+  root = vim.trim(root)
 
   if root ~= state.root then
     notify('SaffGitRootChanged', { old = state.root, new = root })
@@ -138,7 +135,8 @@ local update_branch = async(function(gen)
     branch, err = await(syscall({ 'git', 'rev-parse', '--short', 'HEAD' }))
     if gen ~= state.gen then return end
     if err then return error(err) end
-  end
+  end ---@cast branch -?
+  branch = vim.trim(branch)
 
   if branch ~= state.branch then
     notify('SaffGitBranchChanged', { old = state.branch, new = branch })
@@ -153,7 +151,8 @@ end)
 local update_head = async(function(gen)
   local head, err = await(syscall({ 'git', 'rev-parse', 'HEAD' }))
   if gen ~= state.gen then return end
-  if err then return error(err) end
+  if err then return error(err) end ---@cast head -?
+  head = vim.trim(head)
 
   if head ~= state.head then
     notify('SaffGitHeadChanged', { old = state.head, new = head })
@@ -169,7 +168,7 @@ local update_index = async(function(gen)
   local path, err_path = await(syscall({ 'git', 'rev-parse', '--git-path', 'index' }))
   if gen ~= state.gen then return end
   if err_path then return error(err_path) end ---@cast path -?
-  path = fn.fnamemodify(path, ':p')
+  path = fn.fnamemodify(vim.trim(path), ':p')
 
   local fd, err_fd = await(fs_open(path, 'r', 0))
   if gen ~= state.gen then return end
@@ -208,9 +207,8 @@ local update_status = async(function(gen, buf)
 
   local status, err = await(syscall({ 'git', '-C', state.root, 'status', '--short', s.path }))
   if gen ~= state.gen then return end
-  if err then return error(err) end
-  status = status and status:sub(1, 2)
-
+  if err then return error(err) end ---@cast status -?
+  status = status:sub(1, 2)
   if status ~= s.status then
     notify('SaffGitStatusChanged', { old = s.status, new = status })
     s.status = status
