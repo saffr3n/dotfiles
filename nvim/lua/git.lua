@@ -220,8 +220,7 @@ end)
 ---@param gen integer
 ---@param buf integer
 local update_buf = async(function(gen, buf)
-  local s = state[buf]
-  if not s then return end
+  if not state.bufs[buf] then return end
   update_status(gen, buf)
 end)
 
@@ -316,7 +315,9 @@ local init = async(function()
     state.gen = gen
     state.cwd = cwd
 
-    if not await(update_dir(gen)) then return clear() end
+    local dir = await(update_dir(gen))
+    if not dir then return clear() end
+
     start_watcher()
     table.insert(tasks, update_root(gen))
   end
@@ -326,7 +327,7 @@ local init = async(function()
   table.insert(tasks, update_index(gen))
   await(Promise.all(tasks))
 
-  utils.for_visible_bufs(function(buf) init_buf(buf) end)
+  utils.for_visible_bufs(init_buf)
 end)
 
 api.nvim_create_autocmd({ 'VimEnter', 'DirChanged' }, {
