@@ -11,19 +11,20 @@ local api = vim.api
 if fn.executable('git') == 0 then return end
 
 ---@type {
----  gen        : integer,
----  cwd?       : string,
----  dir?       : string,
----  root?      : string,
----  branch?    : string,
----  head?      : string,
----  index?     : string,
----  [integer]? : {
----    path    : string,
+---  gen     : integer,
+---  cwd?    : string,
+---  dir?    : string,
+---  root?   : string,
+---  branch? : string,
+---  head?   : string,
+---  index?  : string,
+---  bufs    : table<integer, string?>,
+---  files   : table<string, {
+---    bufs    : table<integer, boolean?>,
 ---    status? : string,
----  },
+---  }?>,
 ---}
-local state = { gen = 0 }
+local state = { gen = 0, bufs = {}, files = {} }
 
 ---@type uv.uv_fs_event_t?
 local watcher
@@ -202,16 +203,29 @@ end)
 ---@param buf integer
 ---@return string?
 local update_status = async(function(gen, buf)
-  local s = state[buf]
-  if not s then return end
+  local path = state.bufs[buf]
+  if not path then return end
 
-  local status, err = await(syscall({ 'git', '-C', state.root, 'status', '--short', s.path }))
-  if gen ~= state.gen then return end
-  if err then return error(err) end ---@cast status -?
-  status = status:sub(1, 2)
-  if status ~= s.status then
-    notify('SaffGitStatusChanged', { old = s.status, new = status })
-    s.status = status
+  local file = state.files[path]
+  if not file then return end
+
+  local status, err = await(syscall({ 'git', '-C', state.root, 'status', '--short', path }))
+
+  if gen ~= state.gen
+    or path ~= state.bufs[buf]
+    or file ~= state.files[path]
+  then return end
+
+  if err then return error(err) end
+
+  if status == ''
+    then status = nil
+    else status = status--[[@cast -?]]:sub(1, 2)
+  end
+
+  if status ~= file.status then
+    notify('SaffGitStatusChanged', { old = file.status, new = status })
+    file.status = status
   end
 
   return status
@@ -265,12 +279,19 @@ end
 
 ---@param buf integer
 local function clear_buf(buf)
-  local s = state[buf]
-  if not s then return end
+  local path = state.bufs[buf]
+  if not path then return end
+  state.bufs[buf] = nil
 
-  if s.status then notify('SaffGitStatusChanged', { old = s.status, new = nil }) end
+  local file = state.files[path]
+  if not file then return end
 
-  state[buf] = nil
+  if file.status then notify('SaffGitStatusChanged', { old = file.status, new = nil }) end
+
+  file.bufs[buf] = nil
+  if vim.tbl_isempty(file.bufs) then
+    state.files[path] = nil
+  end
 end
 
 local function clear()
@@ -282,23 +303,35 @@ local function clear()
   if state.head   then notify('SaffGitHeadChanged',   { old = state.head,   new = nil }) end
   if state.index  then notify('SaffGitIndexChanged',  { old = state.index,  new = nil }) end
 
-  state = { gen = state.gen + 1 }
+  for buf in pairs(state.bufs) do
+    clear_buf(buf)
+  end
+
+  state = { gen = state.gen + 1, bufs = {}, files = {} }
 end
 
 ---@param buf integer
 local function init_buf(buf)
-  local path = get_buf_path(buf)
-  if not path then return clear_buf(buf) end
+  local new_path = get_buf_path(buf)
+  if not new_path then return clear_buf(buf) end
 
-  local s = state[buf]
-  if not s then
-    state[buf] = { path = path }
-    s          = state[buf]
-    -- attach diffs updater
-  elseif path ~= s.path then
-    s.path = path
-    -- clear current diffs
+  local old_path = state.bufs[buf]
+  if old_path then
+    if old_path == new_path then
+      return update_buf(state.gen, buf)
+    else
+      clear_buf(buf)
+    end
   end
+
+  local file = state.files[new_path]
+  if not file then
+    file                  = { bufs = {} }
+    state.files[new_path] = file
+  end
+
+  file.bufs[buf]  = true
+  state.bufs[buf] = new_path
 
   update_buf(state.gen, buf)
 end
