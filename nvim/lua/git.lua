@@ -90,7 +90,7 @@ end
 ---| 'SaffGitHeadChanged'
 ---| 'SaffGitIndexChanged'
 ---| 'SaffGitStatusChanged'
----@param data { old?: string, new?: string }
+---@param data { old?: string, new?: string, bufs?: integer[] }
 local function notify(event, data)
   api.nvim_exec_autocmds('User', { pattern = event, data = data })
 end
@@ -224,7 +224,7 @@ local update_status = async(function(gen, buf)
   end
 
   if status ~= file.status then
-    notify('SaffGitStatusChanged', { old = file.status, new = status })
+    notify('SaffGitStatusChanged', { old = file.status, new = status, bufs = vim.tbl_keys(file.bufs) })
     file.status = status
   end
 
@@ -286,7 +286,7 @@ local function clear_buf(buf)
   local file = state.files[path]
   if not file then return end
 
-  if file.status then notify('SaffGitStatusChanged', { old = file.status, new = nil }) end
+  if file.status then notify('SaffGitStatusChanged', { old = file.status, new = nil, bufs = { buf } }) end
 
   file.bufs[buf] = nil
   if vim.tbl_isempty(file.bufs) then
