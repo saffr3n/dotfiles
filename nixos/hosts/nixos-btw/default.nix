@@ -101,6 +101,7 @@
     man-pages
     man-pages-posix
 
+    gcc
     git
     gnumake
     vim
