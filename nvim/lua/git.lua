@@ -41,12 +41,10 @@ local syscall = promisify(function(cmd, cb)
   end)
 end)
 
----@param path  string
----@param flags string | integer
----@param mode  integer
----@param cb    fun(err?: string, fd?: integer)
-local fs_open = promisify(function(path, flags, mode, cb)
-  uv.fs_open(path, flags, mode, function(err, fd)
+---@param path string
+---@param cb   fun(err?: string, fd?: integer)
+local fs_open = promisify(function(path, cb)
+  uv.fs_open(path, 'r', 0, function(err, fd)
     if err
       then cb(err, nil)
       else cb(nil, fd)
