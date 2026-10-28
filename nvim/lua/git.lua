@@ -35,10 +35,9 @@ end
 ---@param cmd string[]
 ---@param cb  fun(err?: string, out?: string)
 local syscall = promisify(function(cmd, cb)
-  local trace = debug.traceback('', 6)
   vim.system(cmd, function(out)
     if out.code ~= 0
-      then cb(out.stderr .. trace, nil)
+      then cb(out.stderr, nil)
       else cb(nil, out.stdout)
     end
   end)
