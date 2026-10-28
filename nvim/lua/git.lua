@@ -77,17 +77,11 @@ local fs_read = promisify(function(fd, size, cb)
   end)
 end)
 
----@param msg string
-local function error(msg)
-  vim.notify(msg, vim.log.levels.ERROR)
-end
-
 ---@param gen integer
 ---@return string?
 local update_dir = async(function(gen)
-  local dir, err = await(syscall({ 'git', 'rev-parse', '--git-dir' }))
-  if gen ~= state.gen then return end
-  if err then return error(err) end ---@cast dir -?
+  local dir = await(syscall({ 'git', 'rev-parse', '--git-dir' }))
+  if not dir or gen ~= state.gen then return end
   dir = vim.trim(dir)
 
   if dir ~= state.dir then
@@ -101,9 +95,8 @@ end)
 ---@param gen integer
 ---@return string?
 local update_root = async(function(gen)
-  local root, err = await(syscall({ 'git', 'rev-parse', '--show-toplevel' }))
-  if gen ~= state.gen then return end
-  if err then return error(err) end ---@cast root -?
+  local root = await(syscall({ 'git', 'rev-parse', '--show-toplevel' }))
+  if not root or gen ~= state.gen then return end
   root = vim.trim(root)
 
   if root ~= state.root then
@@ -117,29 +110,26 @@ end)
 ---@param gen integer
 ---@return string?
 local update_index = async(function(gen)
-  local path, err_path = await(syscall({ 'git', 'rev-parse', '--git-path', 'index' }))
-  if gen ~= state.gen then return end
-  if err_path then return error(err_path) end ---@cast path -?
+  local path = await(syscall({ 'git', 'rev-parse', '--git-path', 'index' }))
+  if not path or gen ~= state.gen then return end
   path = fn.fnamemodify(vim.trim(path), ':p')
 
-  local fd, err_fd = await(fs_open(path, 'r', 0))
-  if gen ~= state.gen then return end
-  if err_fd then return error(err_fd) end ---@cast fd -?
-
-  local stat, err_stat = await(fs_stat(fd))
+  local fd = await(fs_open(path))
+  if not fd then return end
   if gen ~= state.gen then
     uv.fs_close(fd)
     return
   end
-  if err_stat then
-    uv.fs_close(fd)
-    return error(err_stat)
-  end ---@cast stat -?
 
-  local data, err_data = await(fs_read(fd, stat.size, 0))
+  local stat = await(fs_stat(fd))
+  if not stat or gen ~= state.gen then
+    uv.fs_close(fd)
+    return
+  end
+
+  local data = await(fs_read(fd, stat.size))
   uv.fs_close(fd)
-  if gen ~= state.gen then return end
-  if err_data then return error(err_data) end ---@cast data -?
+  if not data or gen ~= state.gen then return end
 
   local index = fn.sha256(data)
   if index ~= state.index then
@@ -153,9 +143,8 @@ end)
 ---@param gen integer
 ---@return string?
 local update_head = async(function(gen)
-  local head, err = await(syscall({ 'git', 'rev-parse', 'HEAD' }))
-  if gen ~= state.gen then return end
-  if err then return error(err) end ---@cast head -?
+  local head = await(syscall({ 'git', 'rev-parse', 'HEAD' }))
+  if not head or gen ~= state.gen then return end
   head = vim.trim(head)
 
   if head ~= state.head then
@@ -169,13 +158,12 @@ end)
 ---@param gen integer
 ---@return string?
 local update_branch = async(function(gen)
-  local branch, err = await(syscall({ 'git', 'symbolic-ref', '--short', 'HEAD' }))
+  local branch = await(syscall({ 'git', 'symbolic-ref', '--short', 'HEAD' }))
   if gen ~= state.gen then return end
-  if err then
-    branch, err = await(syscall({ 'git', 'rev-parse', '--short', 'HEAD' }))
-    if gen ~= state.gen then return end
-    if err then return error(err) end
-  end ---@cast branch -?
+  if not branch then
+    branch = await(syscall({ 'git', 'rev-parse', '--short', 'HEAD' }))
+    if not branch or gen ~= state.gen then return end
+  end
   branch = vim.trim(branch)
 
   if branch ~= state.branch then
@@ -188,7 +176,7 @@ end)
 
 ---@param err string?
 local function on_dir_changed(err)
-  if err then return error(err) end
+  if err then return end
   update_head(state.gen)
   update_branch(state.gen)
   update_index(state.gen)
