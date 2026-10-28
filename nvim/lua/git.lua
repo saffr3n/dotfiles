@@ -10,7 +10,6 @@ if fn.executable('git') == 0 then return end
 
 ---@type {
 ---  gen     : integer,
----  cwd?    : string,
 ---  dir?    : string,
 ---  root?   : string,
 ---  branch? : string,
@@ -226,23 +225,19 @@ local function clear()
 end
 
 local init = async(function()
-  local cwd = uv.cwd()
-  if not cwd then return clear() end
+  local gen = state.gen + 1
+  state.gen = gen
 
-  local gen   = state.gen
+  local old_dir = state.dir
+  local new_dir = await(update_dir(gen))
 
-  if cwd ~= state.cwd then
-    gen       = gen + 1
-    state.gen = gen
-    state.cwd = cwd
+  if gen ~= state.gen then return end
+  if not new_dir then return clear() end
+  if new_dir == old_dir then return end
 
-    local dir = await(update_dir(gen))
-    if not dir then return clear() end
+  start_watcher()
 
-    start_watcher()
-    update_root(gen)
-  end
-
+  update_root(gen)
   update_index(gen)
   update_head(gen)
   update_branch(gen)
