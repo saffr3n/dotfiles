@@ -63,12 +63,11 @@ local fs_stat = promisify(function(fd, cb)
   end)
 end)
 
----@param fd     integer
----@param size   integer
----@param offset integer
----@param cb     fun(err?: string, data?: string)
-local fs_read = promisify(function(fd, size, offset, cb)
-  uv.fs_read(fd, size, offset, function(err, data)
+---@param fd   integer
+---@param size integer
+---@param cb   fun(err?: string, data?: string)
+local fs_read = promisify(function(fd, size, cb)
+  uv.fs_read(fd, size, 0, function(err, data)
     if err
       then cb(err, nil)
       else cb(nil, data)
