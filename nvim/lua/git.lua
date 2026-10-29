@@ -199,6 +199,17 @@ local function start_watcher()
   watcher:start(dir, {}, on_dir_changed)
 end
 
+local function init_state() ---@cast state +?
+  state = {
+    gen    = state and state.gen or 0,
+    dir    = '',
+    root   = '',
+    index  = '',
+    head   = '',
+    branch = '',
+  }
+end
+
 local function clear()
   stop_watcher()
 
@@ -208,10 +219,12 @@ local function clear()
   if state.head   then notify('SaffGitHeadChanged',   { old = state.head,   new = nil }) end
   if state.index  then notify('SaffGitIndexChanged',  { old = state.index,  new = nil }) end
 
-  state = { gen = state.gen + 1 }
+  init_state()
 end
 
 local init = async(function()
+  init_state()
+
   local gen = state.gen + 1
   state.gen = gen
 
