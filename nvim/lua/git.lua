@@ -21,6 +21,15 @@ local state = { gen = 0 }
 ---@type uv.uv_fs_event_t?
 local watcher
 
+local augrp = api.nvim_create_augroup('saff.git', { clear = true })
+
+---@param event vim.api.keyset.events | vim.api.keyset.events[]
+---@param cb    fun(args: vim.api.keyset.create_autocmd.callback_args): boolean?
+---@return integer
+local function aucmd(event, cb)
+  return api.nvim_create_autocmd(event, { group = augrp, callback = cb })
+end
+
 ---@param event
 ---| 'SaffGitDirChanged'
 ---| 'SaffGitRootChanged'
@@ -201,7 +210,7 @@ end
 
 local function init_state() ---@cast state +?
   state = {
-    gen    = state and state.gen or 0,
+    gen    = state and state.gen or 1,
     dir    = '',
     root   = '',
     index  = '',
@@ -225,6 +234,18 @@ end
 local init = async(function()
   init_state()
 
+  local dir = await(update_dir(state.gen))
+  if not dir or gen ~= state.gen then return end
+
+  start_watcher()
+
+  update_root()
+  update_index()
+  update_head()
+  update_branch()
+end)
+
+local update = async(function()
   local gen = state.gen + 1
   state.gen = gen
 
@@ -243,7 +264,5 @@ local init = async(function()
   update_branch(gen)
 end)
 
-api.nvim_create_autocmd({ 'VimEnter', 'DirChanged' }, {
-  group    = api.nvim_create_augroup('saff.git', { clear = true }),
-  callback = init,
-})
+aucmd('VimEnter',   function() init() end)
+aucmd('DirChanged', function() update() end)
